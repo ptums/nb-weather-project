@@ -2,6 +2,7 @@ package com.example.nb_weather_ol.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,34 @@ public class WeatherQueriesService {
         } catch (Exception e) {
             logger.error("Error fetching all weather query entries: {}", e.getMessage());
             throw new RuntimeException("Failed to fetch all weather query entries", e);
+        }
+    }
+
+    // Read all entries by query field
+    public List<WeatherQueries> getAllByDateStr(String dateStr) {
+        logger.info("1.A Fetching all weather query entries by dateStr: {}", dateStr);
+        try {
+            if (dateStr == null) {
+                logger.warn("1.B dateStr is null");
+                throw new IllegalArgumentException("dateStr cannot be null");
+            }
+
+            String modifiedDateStr = dateStr;
+            Pattern hyphenPattern = Pattern.compile("-");
+            logger.info("1.C hyphenPattern '{}'", hyphenPattern);
+            logger.info("1.CA hyphenPattern.matcher(dateStr).find() {}", hyphenPattern.matcher(dateStr).find());
+            if (hyphenPattern.matcher(dateStr).find()) {
+                modifiedDateStr = dateStr.replaceAll("-", "_");
+                logger.info("1.D Modified dateStr from '{}' to '{}'", dateStr, modifiedDateStr);
+                return weatherQueriesRepository.findAllByDateStr(modifiedDateStr);
+            } else {
+                logger.info("1.E No modification needed for dateStr: '{}'", dateStr);
+            }
+
+            return null;
+        } catch (Exception e) {
+            logger.error("1.X Error fetching all weather query entries: {}", e.getMessage());
+            throw new RuntimeException("1.C Failed to fetch all weather query entries", e);
         }
     }
 

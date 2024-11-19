@@ -3,13 +3,13 @@ package com.example.nb_weather_ol.controller;
 import com.example.nb_weather_ol.model.*;
 import com.example.nb_weather_ol.service.*;
 
+import java.util.*;
+
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/wq")
@@ -52,6 +52,24 @@ public class WeatherQueriesController {
             }
             return new ResponseEntity<>(weatherQueriesList, HttpStatus.OK);
         } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/select/{dateStr}")
+    public ResponseEntity<List<WeatherQueries>> getWeatherAllByDateStr(@PathVariable String dateStr) {
+        logger.info("1. dateStr {}", dateStr);
+        try {
+            List<WeatherQueries> weatherQueriesList = weatherQueriesService.getAllByDateStr(dateStr);
+            logger.info("2. size of weatherQueriesList.size {}", weatherQueriesList.size());
+            if (weatherQueriesList.isEmpty()) {
+                logger.info("3. failure!!!!!!");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            logger.info("4. cool!!!!!!");
+            return new ResponseEntity<>(weatherQueriesList, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            logger.info("5. BIG NO!!!!!!");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
