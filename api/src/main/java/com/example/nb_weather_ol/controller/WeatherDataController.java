@@ -3,7 +3,6 @@ package com.example.nb_weather_ol.controller;
 import com.example.nb_weather_ol.model.*;
 import com.example.nb_weather_ol.service.WeatherDataService;
 
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
