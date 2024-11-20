@@ -8,7 +8,7 @@ import { localDate } from "./utils";
 import { useToggleView } from "./context/toggle-view-context";
 import { useCurrentDateDB } from "./hooks/useCurrentDateDB";
 import { useWeatherDataDB } from "./hooks/useWeatherDataDB";
-import { findWeatherDataById, findWeatherQueriesByUserId } from "./utils/api2";
+import { findWeatherDataById, findWeatherQueriesByUserId } from "./utils/api";
 
 function App() {
   // const {

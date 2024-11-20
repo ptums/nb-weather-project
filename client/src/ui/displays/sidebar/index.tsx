@@ -8,7 +8,7 @@ import { RouteButton } from "./RoutePopover";
 import { useWeatherDataDB } from "@/hooks/useWeatherDataDB";
 import { useCompareList } from "@/context/compare-list-context";
 import React from "react";
-import { findWeatherDataById } from "@/utils/api2";
+import { findWeatherDataById } from "@/utils/api";
 
 interface SidebarProps {
   title: string;

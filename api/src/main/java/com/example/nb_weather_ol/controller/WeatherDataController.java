@@ -33,7 +33,7 @@ public class WeatherDataController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/i/{id}")
     public ResponseEntity<List<WeatherData>> getWeatherDataById(@PathVariable Long id) {
         try {
             List<WeatherData> weatherDataList = weatherDataService.getWeatherDataById(id);

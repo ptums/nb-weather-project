@@ -15,7 +15,7 @@ import { WeatherData, WeatherQueries } from "@/utils/types";
 
 // import { useCompareList } from "@/context/compare-list-context";
 import { useToggleView } from "@/context/toggle-view-context";
-import { createWeatherData, createWeatherQueries } from "@/utils/api2";
+import { createWeatherData, createWeatherQueries } from "@/utils/api";
 
 const schema = yup.object().shape({
   month: yup
