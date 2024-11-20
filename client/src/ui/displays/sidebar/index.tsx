@@ -1,12 +1,11 @@
 import { WeatherData, WeatherQueries } from "@/utils/types";
 import classNames from "classnames";
 import { useMutation } from "@tanstack/react-query";
-import { fetchMonthWeatherData } from "@/utils/api";
 import { useWeatherData } from "@/context/weather-data-context";
 import { useToggleView } from "@/context/toggle-view-context";
 import { RouteButton } from "./RoutePopover";
-import { useWeatherDataDB } from "@/hooks/useWeatherDataDB";
-import { useCompareList } from "@/context/compare-list-context";
+// import { useWeatherDataDB } from "@/hooks/useWeatherDataDB";
+// import { useCompareList } from "@/context/compare-list-context";
 import React from "react";
 import { findWeatherDataById } from "@/utils/api";
 

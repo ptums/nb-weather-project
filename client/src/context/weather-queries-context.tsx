@@ -21,14 +21,14 @@ interface WeatherQueriesProviderProps {
   children: ReactNode;
 }
 
+const defaultQuery = `${defaultMonth}-${defaultYear}`;
+
 export const WeatherQueriesProvider: React.FC<WeatherQueriesProviderProps> = ({
   children,
 }) => {
-  const [query, setQuery] = useState<string>(
-    `${defaultMonth} - ${defaultYear}`
-  );
+  const [query, setQuery] = useState<string>(defaultQuery);
   const [queryId, setQueryId] = useState<number | null>(null);
-  const [queryList, setQueryList] = useState<string[]>([]);
+  const [queryList, setQueryList] = useState<WeatherQueries[]>([]);
 
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 

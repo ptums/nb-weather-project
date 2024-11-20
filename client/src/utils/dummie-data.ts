@@ -6,6 +6,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 28.6,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 2,
@@ -13,6 +14,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 28.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 3,
@@ -20,6 +22,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 39.8,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 4,
@@ -27,6 +30,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 37.7,
     weather: "SUNNY",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 5,
@@ -34,6 +38,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 30.8,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 6,
@@ -41,6 +46,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29.4,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 7,
@@ -48,6 +54,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 36.6,
     weather: "SUNNY",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 8,
@@ -55,6 +62,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 37.2,
     weather: "SUNNY",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 9,
@@ -62,6 +70,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 30.1,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 10,
@@ -69,6 +78,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 27.7,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 11,
@@ -76,6 +86,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 33.7,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 12,
@@ -83,6 +94,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29.7,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 13,
@@ -90,6 +102,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 27.1,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 14,
@@ -97,6 +110,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 27.1,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 15,
@@ -104,6 +118,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 30.5,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 16,
@@ -111,6 +126,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29.6,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 17,
@@ -118,6 +134,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 27.7,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 18,
@@ -125,6 +142,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 24.2,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 19,
@@ -132,6 +150,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 23.4,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 20,
@@ -139,6 +158,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 22.8,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 21,
@@ -146,6 +166,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 23.8,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 22,
@@ -153,6 +174,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 25.4,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 23,
@@ -160,6 +182,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 24,
@@ -167,6 +190,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 31.6,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 25,
@@ -174,6 +198,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 24.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 26,
@@ -181,6 +206,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 14,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 27,
@@ -188,6 +214,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 9.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 28,
@@ -195,6 +222,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 12.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 29,
@@ -202,6 +230,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29.2,
     weather: "RAIN",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 30,
@@ -209,6 +238,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 25.3,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
   {
     date: 31,
@@ -216,6 +246,7 @@ export const dummieData: WeatherData[] = [
     lowTemp: 29,
     weather: "CLEAR",
     windSpeed: 12,
+    queryId: 1,
   },
 ];
 
