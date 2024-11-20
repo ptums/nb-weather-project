@@ -17,6 +17,7 @@ export type WeatherData = {
     | "SUNNY"
     | "UNKNOWN";
   windSpeed: number;
+  queryId: number;
 };
 
 export type WeatherQueries = {
