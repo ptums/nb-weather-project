@@ -2,7 +2,6 @@ import { CompareView, SiteTitle, WeatherTable, DateForm, Sidebar } from "./ui";
 import { useWeatherQueries } from "./context/weather-queries-context";
 import { useEffect, useState } from "react";
 import { useWeatherData } from "./context/weather-data-context";
-import { localDate } from "./utils";
 import { useToggleView } from "./context/toggle-view-context";
 import { useCurrentDateDB } from "./hooks/useCurrentDateDB";
 import { useWeatherDataDB } from "./hooks/useWeatherDataDB";
@@ -11,6 +10,8 @@ import {
   findWeatherQueriesByUserId,
   searchWeatherQueries,
 } from "./utils/api";
+import { WeatherData, WeatherQueries } from "./utils/types";
+import { useQuery } from "@tanstack/react-query";
 
 function App() {
   const {
@@ -25,11 +26,38 @@ function App() {
     error: dateError,
   } = useCurrentDateDB();
 
-  // const [shouldFetch, setShouldFetch] = useState(false);
-  const { setWeatherData, weatherData } = useWeatherData();
-  const { queryList, setQueryList, query, setQueryId } = useWeatherQueries();
+  const { setWeatherData } = useWeatherData();
+  const { queryList, setQueryList, query, setQueryId, queryId } =
+    useWeatherQueries();
   const { decision } = useToggleView();
   const [userId, setUserId] = useState<string | null>(null);
+  const [shouldSearchWeatherQuery, setShouldSearchWeatherQuery] =
+    useState<boolean>(false);
+  const [shouldFindWeatherDataById, setShouldSFindWeatherDataById] =
+    useState<boolean>(false);
+  const [
+    shouldFindWeatherQueriesByUserId,
+    setShouldFindWeatherQueriesByUserId,
+  ] = useState<boolean>(false);
+
+  // Add tan stack queries here ...
+  const { data: weatherQuery } = useQuery<WeatherQueries[], Error>({
+    queryKey: ["weatherQuery"],
+    queryFn: () => searchWeatherQueries(query),
+    enabled: shouldSearchWeatherQuery && query !== null,
+  });
+
+  const { data: weatherData } = useQuery<WeatherData[], Error>({
+    queryKey: ["weatherData"],
+    queryFn: () => findWeatherDataById(queryId as number),
+    enabled: shouldFindWeatherDataById,
+  });
+
+  const { data: userWeatherQueriesByUser } = useQuery<WeatherQueries[], Error>({
+    queryKey: ["userWeatherQueries"],
+    queryFn: () => findWeatherQueriesByUserId(userId as string),
+    enabled: shouldFindWeatherQueriesByUserId && userId !== null,
+  });
 
   useEffect(() => {
     const fetchInitialWeatherData = async () => {
@@ -41,36 +69,36 @@ function App() {
         return;
       }
 
-      if (weatherDataDB.length > 0 && weatherData.length <= 0) {
-        if (localDate === localDateDB) {
-          setWeatherData(weatherDataDB);
-        } else {
-          const weatherQueries = await searchWeatherQueries(query);
+      if (weatherDataDB.length > 0) {
+        setWeatherData(weatherDataDB);
+      } else {
+        setShouldSearchWeatherQuery(true);
 
-          if (weatherQueries.length > 0) {
-            const id = weatherQueries[0]?.id;
-            setQueryId(id);
+        if (weatherQuery && weatherQuery.length > 0) {
+          const id = weatherQuery[0]?.id;
+          setQueryId(id);
 
-            const requestWeatherData = await findWeatherDataById(id);
+          setShouldSFindWeatherDataById(true);
 
-            if (requestWeatherData.length > 0) {
-              setWeatherData(requestWeatherData);
-              addWeatherData(requestWeatherData);
-
-              // once the weather data is set update the sidebar
-              const requestWeatherQueries = await findWeatherQueriesByUserId(
-                userId as string
-              );
-
-              if (
-                queryList.length <= 0 &&
-                requestWeatherQueries &&
-                requestWeatherQueries?.length > 0
-              ) {
-                setQueryList(requestWeatherQueries);
-              }
-            }
+          if (weatherData && weatherData.length > 0) {
+            setWeatherData(weatherData);
+            addWeatherData(weatherData);
+            setShouldSearchWeatherQuery(false);
           }
+        }
+      }
+
+      if (userId) {
+        // once the weather data is set update the sidebar
+        setShouldFindWeatherQueriesByUserId(true);
+        if (
+          queryList.length <= 0 &&
+          userWeatherQueriesByUser &&
+          userWeatherQueriesByUser.length > 0
+        ) {
+          setQueryList(userWeatherQueriesByUser);
+          setShouldSFindWeatherDataById(false);
+          setShouldFindWeatherQueriesByUserId(false);
         }
       }
     };
@@ -90,6 +118,8 @@ function App() {
     userId,
     queryList.length,
     setQueryList,
+    weatherQuery,
+    userWeatherQueriesByUser,
   ]);
 
   // Get userId from local storage
