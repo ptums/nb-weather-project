@@ -1,20 +1,34 @@
-# Use the official OpenJDK image as a parent image
-FROM openjdk:23-slim
-
-# Install SQLite3
-RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
+# Use Eclipse Temurin as it provides Java 23
+FROM eclipse-temurin:23-jdk-alpine as build
 
 # Set the working directory in the container
+WORKDIR /workspace/app
+
+# Copy the Maven executable to the container
+COPY mvnw .
+COPY .mvn .mvn
+
+# Copy the project files
+COPY pom.xml .
+COPY src src
+
+# Build the application
+RUN ./mvnw install -DskipTests
+
+# Create the runtime image
+FROM eclipse-temurin:23-jre-alpine
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the JAR file into the container
-COPY target/nb-weather-ol-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built artifact from the build stage
+COPY --from=build /workspace/app/target/*.jar app.jar
 
-# Create a directory for the database
-RUN mkdir -p /app/data
+# Install SQLite
+RUN apk add --no-cache sqlite
 
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
