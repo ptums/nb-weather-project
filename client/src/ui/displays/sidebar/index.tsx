@@ -27,7 +27,6 @@ export const Sidebar = ({
     async (query: string) => {
       const month = convertToMonthsYears(query, 0);
       const year = convertToMonthsYears(query, 1);
-      console.log("query param >>", query);
 
       const results = await searchWeatherQueries(query);
 
@@ -50,9 +49,18 @@ export const Sidebar = ({
     [setCompareList]
   );
 
-  // const clearCompareList = useCallback(() => {
-  //   setCompareList([]);
-  // }, [setCompareList]);
+  const removeFromCompareList = useCallback(
+    (id: string) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      setCompareList((prevList) => prevList.filter((item) => item.id !== id));
+    },
+    [setCompareList]
+  );
+
+  const clearCompareList = useCallback(() => {
+    setCompareList([]);
+  }, [setCompareList]);
 
   return (
     <div
@@ -61,8 +69,15 @@ export const Sidebar = ({
       })}
     >
       <div className="p-4 relative h-full">
-        <h2 className="text-lg uppercase tracking-tight font-semibold text-rose-900 mb-4 uppercase">
-          {title}
+        <h2
+          // onClick={() => clearCompareList()}
+          className="text-lg uppercase tracking-tight font-semibold text-rose-900 mb-4 uppercase"
+        >
+          {title.includes("History") ? (
+            title
+          ) : (
+            <button onClick={() => clearCompareList()}>{title}</button>
+          )}
         </h2>
         <ul className="space-y-4">
           {items &&
@@ -88,9 +103,9 @@ export const Sidebar = ({
                       </li>
                     ) : (
                       <li
-                        // onClick={() =>
-                        //   removeFromCompareList(item.id.toString() as string)
-                        // }
+                        onClick={() =>
+                          removeFromCompareList(item.id.toString() as string)
+                        }
                         className="flex items-center space-x-2 text-sm tracking-tight font-semibold text-rose-600 cursor-pointer hover:text-rose-900"
                       >
                         <span>{item.query}</span>

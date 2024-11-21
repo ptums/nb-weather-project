@@ -14,7 +14,6 @@ const defaultQuery = `${defaultMonth}-${defaultYear}`;
 const NBWeatherApp = () => {
   const [toggleView, setToggleView] = useState<boolean>(true);
   const [query, setQuery] = useState<string>(defaultQuery);
-  const [queryId, setQueryId] = useState<number | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [compareList, setCompareList] = useState<CompareWeatherData[]>([]);
   const randomId = useId();
@@ -49,7 +48,7 @@ const NBWeatherApp = () => {
           if (!weatherQueries || weatherQueries.length === 0) {
             throw new Error("No weather query data available");
           }
-          setQueryId(weatherQueries[0].id);
+
           return findWeatherDataById(weatherQueries[0].id);
         },
       },
@@ -65,23 +64,12 @@ const NBWeatherApp = () => {
 
   // Use the results
   const weatherData = weatherDataResult.data;
-  const weatherQueryByUser = weatherQueryByUserResult.data;
-  console.log({
-    weatherData,
-  });
+  const weatherQueryByUser = weatherQueryByUserResult?.data;
+
   // Rest of your component logic here
-
-  // const removeFromCompareList = useCallback(
-  //   (id: string) => {
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     //@ts-expect-error
-  //     setCompareList((prevList) => prevList.filter((item) => item.id !== id));
-  //   },
-  //   [setCompareList]
-  // );
-
-  console.log("compareList >> above", compareList);
-
+  console.log({
+    weatherQueryByUser,
+  });
   return (
     <main className="flex">
       <Sidebar

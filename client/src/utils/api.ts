@@ -56,9 +56,9 @@ export async function createWeatherData(query: string, queryId: number) {
 export async function findWeatherDataById(queryId: number) {
   const url = `${API_URL}${WEAHTER_DATA_ENDPOINT}/i/${queryId}`;
 
-  const data = getResponse(url);
+  const data = await getResponse(url);
 
-  return [...(await data)];
+  return [...data];
 }
 
 /** HELPERS  */
