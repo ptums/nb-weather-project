@@ -5,16 +5,16 @@ import {
   findWeatherQueriesByUserId,
   createWeatherData,
   createWeatherQueries,
+  deleteWeatherQueries,
 } from "./utils/api";
 import { WeatherQueries, WeatherData, CompareWeatherData } from "./utils/types";
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { defaultMonth, defaultYear } from "./utils";
 
 const defaultQuery = `${defaultMonth}-${defaultYear}`;
 
 const NBWeatherApp = () => {
   const [toggleView, setToggleView] = useState<boolean>(true);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [query, setQuery] = useState<string>(defaultQuery);
   const [userId, setUserId] = useState<string | null>(null);
   const [compareList, setCompareList] = useState<CompareWeatherData[]>([]);
@@ -70,10 +70,21 @@ const NBWeatherApp = () => {
     ],
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, weatherDataResult] = queries;
 
   // Use the results
   const weatherData = weatherDataResult.data;
+
+  const clearCompareList = useCallback(() => {
+    setCompareList([]);
+  }, [setCompareList]);
+
+  const clearHistoryList = useCallback(() => {
+    (weatherQueryByUser as WeatherQueries[]).forEach(async (data) => {
+      await deleteWeatherQueries(data?.id);
+    });
+  }, [weatherQueryByUser]);
 
   return (
     <main className="flex">
@@ -83,6 +94,7 @@ const NBWeatherApp = () => {
         setQuery={setQuery}
         setToggleView={setToggleView}
         setCompareList={setCompareList}
+        handleDelete={clearHistoryList}
       />
       <Sidebar
         title="Compare"
@@ -90,14 +102,11 @@ const NBWeatherApp = () => {
         setQuery={setQuery}
         setToggleView={setToggleView}
         setCompareList={setCompareList}
+        handleDelete={clearCompareList}
       />
       <div className="flex flex-col w-full py-8 px-4 bg-rose-100">
         <SiteTitle />
-        <DateForm
-          setQuery={setQuery}
-          setToggleView={setToggleView}
-          setIsSubmitted={setIsSubmitted}
-        />
+        <DateForm setQuery={setQuery} setToggleView={setToggleView} />
         {weatherData && (
           <div className="min-h-screen w-full sm:w-3/4">
             {toggleView ? (

@@ -13,6 +13,7 @@ interface SidebarProps {
   setQuery: (query: string) => void;
   setToggleView: (toggleView: boolean) => void;
   setCompareList: (compareList: CompareWeatherData[]) => void;
+  handleDelete: () => void;
 }
 
 export const Sidebar = ({
@@ -22,6 +23,7 @@ export const Sidebar = ({
   setQuery,
   setToggleView,
   setCompareList,
+  handleDelete,
 }: SidebarProps) => {
   const addToCompareList = useCallback(
     async (query: string) => {
@@ -58,10 +60,6 @@ export const Sidebar = ({
     [setCompareList]
   );
 
-  const clearCompareList = useCallback(() => {
-    setCompareList([]);
-  }, [setCompareList]);
-
   return (
     <div
       className={classNames("h-screen w-2/12 border-r bg-white", {
@@ -69,15 +67,13 @@ export const Sidebar = ({
       })}
     >
       <div className="p-4 relative h-full">
-        <h2
-          // onClick={() => clearCompareList()}
-          className="text-lg uppercase tracking-tight font-semibold text-rose-900 mb-4 uppercase"
-        >
-          {title.includes("History") ? (
-            title
-          ) : (
-            <button onClick={() => clearCompareList()}>{title}</button>
-          )}
+        <h2>
+          <button
+            onClick={() => handleDelete()}
+            className="text-lg tracking-tight font-semibold text-rose-900 mb-4"
+          >
+            {title}
+          </button>
         </h2>
         <ul className="space-y-4">
           {items &&
