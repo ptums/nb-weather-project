@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -6,14 +6,16 @@ import {
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-import { useWeatherQueries } from "@/context/weather-queries-context";
-
 import { columns } from "./columns";
-import { useWeatherData } from "@/context/weather-data-context";
+import { WeatherData } from "@/utils/types";
 
-export const WeatherTable = () => {
-  const { query, setIsSubmitted } = useWeatherQueries();
-  const { weatherData } = useWeatherData();
+export const WeatherTable = ({
+  weatherData,
+  query,
+}: {
+  weatherData: WeatherData[];
+  query: string;
+}) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const table = useReactTable({
@@ -21,12 +23,6 @@ export const WeatherTable = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    if (weatherData.length > 0) {
-      setIsSubmitted(false);
-    }
-  }, [weatherData, setIsSubmitted]);
 
   const { rows } = table.getRowModel();
 
@@ -36,10 +32,6 @@ export const WeatherTable = () => {
     estimateSize: () => 34,
     overscan: 20,
   });
-
-  // if (isLoading) return <div>Loading weather data...</div>;
-  // if (error)
-  //   return <div>Error fetching weather data: {(error as Error).message}</div>;
 
   return (
     <div className="mt-6 p-2">

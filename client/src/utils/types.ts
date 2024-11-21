@@ -48,4 +48,5 @@ export type CompareWeatherData = {
   weatherData: WeatherData[];
   month: number;
   year: number;
+  query: string;
 };

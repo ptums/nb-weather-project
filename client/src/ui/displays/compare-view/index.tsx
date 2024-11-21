@@ -8,12 +8,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useCompareList } from "@/context/compare-list-context";
 import { formatCompareWeatherData, getMonthName } from "@/utils";
+import { CompareWeatherData } from "@/utils/types";
 
-export const CompareView = () => {
-  const { compareList } = useCompareList();
-
+interface CompareView {
+  compareList: CompareWeatherData[];
+}
+export const CompareView = ({ compareList }: CompareView) => {
   // Prepare data for the chart
   const chartData = formatCompareWeatherData(compareList);
 
