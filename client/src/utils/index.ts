@@ -78,3 +78,29 @@ export function formatCompareWeatherData(
     return dataPoint;
   });
 }
+
+// convert query to months/years
+
+export function convertToMonthsYears(query: string, index: number) {
+  if (!query || typeof query !== "string") {
+    throw new Error("Invalid query: must be a non-empty string");
+  }
+
+  const parts = query.split("-");
+  if (parts.length !== 2) {
+    throw new Error('Invalid query format: expected "month-year"');
+  }
+
+  if (index !== 0 && index !== 1) {
+    throw new Error("Invalid index: must be 0 (for month) or 1 (for year)");
+  }
+
+  const parsedValue = parseInt(parts[index], 10);
+  if (isNaN(parsedValue)) {
+    throw new Error(
+      `Invalid ${index === 0 ? "month" : "year"}: must be a number`
+    );
+  }
+
+  return parsedValue;
+}

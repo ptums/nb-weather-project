@@ -1,21 +1,12 @@
-"use client";
-
-import { useEffect, useId, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { MonthPicker } from "./month-picker";
 import { YearInput } from "./year-input";
-import { useWeatherQueries } from "@/context/weather-queries-context";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { defaultMonth, defaultYear } from "@/utils";
-import { useWeatherData } from "@/context/weather-data-context";
-import { WeatherData, WeatherQueries } from "@/utils/types";
 
-// import { useCompareList } from "@/context/compare-list-context";
-import { useToggleView } from "@/context/toggle-view-context";
-import { createWeatherData, createWeatherQueries } from "@/utils/api2";
+import { defaultMonth, defaultYear } from "@/utils";
 
 const schema = yup.object().shape({
   month: yup
@@ -44,14 +35,14 @@ const schema = yup.object().shape({
 
 type FormData = yup.InferType<typeof schema>;
 
-export function DateForm() {
-  const randomId = useId();
-  const [userId, setUserId] = useState<string>(randomId);
+interface DateForm {
+  setQuery: (query: string) => void;
+  setToggleView: (toggleView: boolean) => void;
+}
+
+export function DateForm({ setQuery, setToggleView }: DateForm) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
-  const { query, setQuery, setQueryId, isSubmitted } = useWeatherQueries();
-  const { setWeatherData } = useWeatherData();
-  const { setDecision } = useToggleView();
 
   const {
     handleSubmit,
@@ -65,67 +56,13 @@ export function DateForm() {
     },
   });
 
-  const weatherDataMutation = useMutation<
-    WeatherData[],
-    Error,
-    { query: string; queryId: number }
-  >({
-    mutationFn: ({ query, queryId }) => createWeatherData(query, queryId),
-    onSuccess: (data) => {
-      setWeatherData(data as WeatherData[]);
-      // You can do something with the data here, like updating state or context
-    },
-    onError: (error) => {
-      console.error("Error fetching weather data:", error);
-      // You can handle the error here, like showing an error message
-    },
-  });
-
-  const weatherQueriesMutation = useMutation<
-    WeatherQueries,
-    Error,
-    { query: string }
-  >({
-    mutationFn: ({ query }) => createWeatherQueries(query, userId),
-    onSuccess: (data) => {
-      setQueryId(data?.id);
-      weatherDataMutation.mutate({
-        query,
-        queryId: data?.id,
-      });
-    },
-    onError: (error) => {
-      console.error("Error fetching weather data:", error);
-    },
-  });
-
   const onSubmit = (data: FormData) => {
     const dateQuery = `${data.month as string}-${
       data.year.toString() as string
     }`;
     setQuery(dateQuery);
-
-    if (data.month && data.year) {
-      weatherQueriesMutation.mutate({ query: dateQuery });
-    }
+    setToggleView(true);
   };
-
-  const handleCompare = () => {
-    // addToCompareList(parseInt(month), parseIyear);
-    setDecision("compare");
-  };
-
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("user_id");
-
-    if (!storedUserId) {
-      localStorage.setItem("user_id", userId);
-      console.log("New user_id set in localStorage:", userId);
-    } else {
-      console.log("Existing user_id found in localStorage:", storedUserId);
-      setUserId(storedUserId);
-    }
-  }, [userId]);
 
   return (
     <div className="w-full sm:w-3/4">
@@ -159,10 +96,14 @@ export function DateForm() {
             <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>
           )}
         </div>
-        <Button type="button" onClick={handleCompare} variant="compare">
+        <Button
+          type="button"
+          onClick={() => setToggleView(false)}
+          variant="compare"
+        >
           Compare
         </Button>
-        <Button type="submit" disabled={isSubmitted} variant="go">
+        <Button type="submit" variant="go">
           Go
         </Button>
       </form>

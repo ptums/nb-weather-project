@@ -136,37 +136,4 @@ public class WeatherDataService {
             throw new RuntimeException("Failed to delete weather data", e);
         }
     }
-
-    // private List<WeatherData> fetchAndSaveNewWeatherData(LocalDate startDate,
-    // LocalDate endDate,
-    // Long queryId) {
-    // try {
-    // CompletableFuture<OpenMeteoData> fetchWeatherData =
-    // weatherDataFetcher.fetchWeatherData(
-    // startDate.getMonthValue(), startDate.getYear());
-    // OpenMeteoData openMeteoData = fetchWeatherData.get();
-    // List<WeatherData> newWeatherData =
-    // weatherDataMapper.mapOpenMeteoToWeatherData(openMeteoData,
-    // queryId);
-
-    // // Filter the new weather data to include only dates from startDate to
-    // endDate
-    // newWeatherData = newWeatherData.stream()
-    // .filter(data -> !data.getDate().isBefore(startDate) &&
-    // !data.getDate().isAfter(endDate))
-    // .collect(Collectors.toList());
-
-    // logger.info("Fetched {} new weather data entries", newWeatherData.size());
-
-    // List<WeatherData> savedWeatherData =
-    // weatherDataRepository.saveAll(newWeatherData);
-    // logger.info("Successfully saved {} new weather data entries",
-    // savedWeatherData.size());
-
-    // return savedWeatherData;
-    // } catch (InterruptedException | ExecutionException e) {
-    // logger.error("Error while fetching or saving new weather data", e);
-    // throw new RuntimeException("Failed to fetch or save new weather data", e);
-    // }
-    // }
 }

@@ -3,7 +3,6 @@ package com.example.nb_weather_ol.controller;
 import com.example.nb_weather_ol.model.*;
 import com.example.nb_weather_ol.service.WeatherDataService;
 
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class WeatherDataController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/i/{id}")
     public ResponseEntity<List<WeatherData>> getWeatherDataById(@PathVariable Long id) {
         try {
             List<WeatherData> weatherDataList = weatherDataService.getWeatherDataById(id);

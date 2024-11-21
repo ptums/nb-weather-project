@@ -17,6 +17,7 @@ export type WeatherData = {
     | "SUNNY"
     | "UNKNOWN";
   windSpeed: number;
+  queryId: number;
 };
 
 export type WeatherQueries = {
@@ -47,4 +48,5 @@ export type CompareWeatherData = {
   weatherData: WeatherData[];
   month: number;
   year: number;
+  query: string;
 };

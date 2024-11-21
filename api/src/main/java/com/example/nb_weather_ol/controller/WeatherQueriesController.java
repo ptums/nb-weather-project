@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/wq")
 public class WeatherQueriesController {
-    private static final Logger logger = LoggerFactory.getLogger(WeatherDataService.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeatherQueriesService.class);
     private final WeatherQueriesService weatherQueriesService;
 
     @Autowired
@@ -32,7 +32,7 @@ public class WeatherQueriesController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/i/{id}")
     public ResponseEntity<WeatherQueries> getWeatherQueryById(@PathVariable Long id) {
         try {
             return weatherQueriesService.getWeatherQueryById(id)
@@ -43,7 +43,7 @@ public class WeatherQueriesController {
         }
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/u/{userId}")
     public ResponseEntity<List<WeatherQueries>> getWeatherQueryByUserId(@PathVariable String userId) {
         try {
             List<WeatherQueries> weatherQueriesList = weatherQueriesService.getAllWeatherQueriesByUserId(userId);
@@ -52,24 +52,6 @@ public class WeatherQueriesController {
             }
             return new ResponseEntity<>(weatherQueriesList, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/select/{dateStr}")
-    public ResponseEntity<List<WeatherQueries>> getWeatherAllByDateStr(@PathVariable String dateStr) {
-        logger.info("1. dateStr {}", dateStr);
-        try {
-            List<WeatherQueries> weatherQueriesList = weatherQueriesService.getAllByDateStr(dateStr);
-            logger.info("2. size of weatherQueriesList.size {}", weatherQueriesList.size());
-            if (weatherQueriesList.isEmpty()) {
-                logger.info("3. failure!!!!!!");
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            logger.info("4. cool!!!!!!");
-            return new ResponseEntity<>(weatherQueriesList, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            logger.info("5. BIG NO!!!!!!");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -84,7 +66,7 @@ public class WeatherQueriesController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/i/{id}")
     public ResponseEntity<WeatherQueries> updateWeatherQuery(@PathVariable Long id,
             @RequestBody WeatherDataRequest request) {
         try {
@@ -98,7 +80,7 @@ public class WeatherQueriesController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/i/{id}")
     public ResponseEntity<Void> deleteWeatherQuery(@PathVariable Long id) {
         try {
             weatherQueriesService.deleteWeatherQuery(id);
@@ -109,5 +91,11 @@ public class WeatherQueriesController {
             }
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/s")
+    public ResponseEntity<List<WeatherQueries>> searchWeatherQueries(@RequestParam String query) {
+        List<WeatherQueries> results = weatherQueriesService.searchWeatherQueries(query);
+        return ResponseEntity.ok(results);
     }
 }
