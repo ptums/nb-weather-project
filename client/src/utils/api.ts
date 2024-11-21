@@ -23,9 +23,9 @@ export async function findWeatherQueriesById(queryId: number) {
 export async function searchWeatherQueries(query: string) {
   const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}/s?query=${query}`;
 
-  const data = getResponse(url);
+  const data = await getResponse(url);
 
-  return [...(await data)];
+  return [...data];
 }
 
 export async function findWeatherQueriesByUserId(userId: string) {

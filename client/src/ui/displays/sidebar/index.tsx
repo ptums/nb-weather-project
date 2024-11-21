@@ -94,7 +94,6 @@ export const Sidebar = ({
                             setToggleView(true);
                           }}
                           onCompare={() => {
-                            console.log("item.query", item.query);
                             addToCompareList(item.query);
                             setToggleView(false);
                           }}

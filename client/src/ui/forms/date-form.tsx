@@ -38,9 +38,14 @@ type FormData = yup.InferType<typeof schema>;
 interface DateForm {
   setQuery: (query: string) => void;
   setToggleView: (toggleView: boolean) => void;
+  setIsSubmitted: (isSubmitted: boolean) => void;
 }
 
-export function DateForm({ setQuery, setToggleView }: DateForm) {
+export function DateForm({
+  setQuery,
+  setToggleView,
+  setIsSubmitted,
+}: DateForm) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
@@ -60,8 +65,10 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
     const dateQuery = `${data.month as string}-${
       data.year.toString() as string
     }`;
+
     setQuery(dateQuery);
     setToggleView(true);
+    setIsSubmitted(true);
   };
 
   return (
