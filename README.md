@@ -10,3 +10,18 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 
 - Rewrite BE in kotlin
 - IndexDB compare sidebar data
+- Large dialogue for comparison mode
+- 5$ per unique location - session deletes on refresh (stripe)
+- analtics (use excalidraws one)
+- feature request from
+
+## Opimizations
+
+- Db refactor: multiple user ids per query, so we dont have duplicate entres
+- Spike: DB compression/optimzation strategy
+- CRON: fetch from open meteo daily to index month/year entries
+
+## legal
+
+- Make software open
+- Open meteo legal stuff
