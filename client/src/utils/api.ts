@@ -2,7 +2,6 @@ import { WEAHTER_DATA_ENDPOINT, WEAHTER_QUERY_ENDPOINT } from "./constants";
 import { PayloadTypes } from "./types";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-console.log({ API_BASE_URL });
 export const buildApiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
 /* Weather Queries requests */
