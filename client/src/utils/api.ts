@@ -1,11 +1,13 @@
 import { WEAHTER_DATA_ENDPOINT, WEAHTER_QUERY_ENDPOINT } from "./constants";
 import { PayloadTypes } from "./types";
 
-const API_URL = import.meta.env.VITE_API_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+console.log({ API_BASE_URL });
+export const buildApiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
 /* Weather Queries requests */
 export async function createWeatherQueries(query: string, userId: string) {
-  const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}`;
+  const url = buildApiUrl(WEAHTER_QUERY_ENDPOINT);
   const payload = { query, userId };
   const data = await postResponse(url, payload);
 
@@ -13,7 +15,8 @@ export async function createWeatherQueries(query: string, userId: string) {
 }
 
 export async function findWeatherQueriesById(queryId: number) {
-  const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}/i/${queryId}`;
+  const path = `${WEAHTER_QUERY_ENDPOINT}/i/${queryId}`;
+  const url = buildApiUrl(path);
 
   const data = getResponse(url);
 
@@ -21,7 +24,8 @@ export async function findWeatherQueriesById(queryId: number) {
 }
 
 export async function searchWeatherQueries(query: string) {
-  const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}/s?query=${query}`;
+  const path = `${WEAHTER_QUERY_ENDPOINT}/s?query=${query}`;
+  const url = buildApiUrl(path);
 
   const data = await getResponse(url);
 
@@ -29,7 +33,8 @@ export async function searchWeatherQueries(query: string) {
 }
 
 export async function findWeatherQueriesByUserId(userId: string) {
-  const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}/u/${userId}`;
+  const path = `${WEAHTER_QUERY_ENDPOINT}/u/${userId}`;
+  const url = buildApiUrl(path);
 
   const data = getResponse(url);
 
@@ -37,7 +42,8 @@ export async function findWeatherQueriesByUserId(userId: string) {
 }
 
 export async function deleteWeatherQueries(queryId: number) {
-  const url = `${API_URL}${WEAHTER_QUERY_ENDPOINT}/i/${queryId}`;
+  const path = `${WEAHTER_QUERY_ENDPOINT}/i/${queryId}`;
+  const url = buildApiUrl(path);
 
   const data = deleteResponse(url);
 
@@ -46,7 +52,8 @@ export async function deleteWeatherQueries(queryId: number) {
 
 /* Weather Data requests */
 export async function createWeatherData(query: string, queryId: number) {
-  const url = `${API_URL}${WEAHTER_DATA_ENDPOINT}`;
+  const url = buildApiUrl(WEAHTER_DATA_ENDPOINT);
+
   const payload = { query, queryId };
   const data = postResponse(url, payload);
 
@@ -54,7 +61,8 @@ export async function createWeatherData(query: string, queryId: number) {
 }
 
 export async function findWeatherDataById(queryId: number) {
-  const url = `${API_URL}${WEAHTER_DATA_ENDPOINT}/i/${queryId}`;
+  const path = `${WEAHTER_DATA_ENDPOINT}/i/${queryId}`;
+  const url = buildApiUrl(path);
 
   const data = await getResponse(url);
 

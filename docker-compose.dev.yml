@@ -12,8 +12,6 @@ services:
       MYSQL_PASSWORD: nbpassword
     volumes:
       - mariadb_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
 
   api:
     build:
@@ -24,29 +22,21 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_NAME=nbweather
-      - DB_USERNAME=nbuser
-      - DB_PASSWORD=nbpassword
-    volumes:
-      - ./backend:/app
-      - ~/.m2:/root/.m2
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/nbweather
+      - SPRING_DATASOURCE_USERNAME=nbuser
+      - SPRING_DATASOURCE_PASSWORD=nbpassword
     depends_on:
       - db
 
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: react-client-dev
     ports:
-      - "3000:3000"
-    volumes:
-      - ./client:/app
-      - /app/node_modules
+      - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://localhost:8080
+      - VITE_API_URL=http://localhost:8080
     depends_on:
       - api
 

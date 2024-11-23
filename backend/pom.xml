@@ -10,10 +10,10 @@
 		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nbweatherproject</groupId>
-	<artifactId>backend</artifactId>
+	<artifactId>nb-historical-weather-data</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>backend</name>
-	<description>Demo project for Spring Boot</description>
+	<name>nb-historical-weather-data</name>
+	<description>New Brunswick Historical Weather Data Project</description>
 	<url/>
 	<licenses>
 		<license/>
