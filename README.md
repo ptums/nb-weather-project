@@ -8,7 +8,6 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 
 ## Post MVP
 
-- Rewrite BE in kotlin
 - IndexDB compare sidebar data
 - Large dialogue for comparison mode
 - 5$ per unique location - session deletes on refresh (stripe)
@@ -25,3 +24,12 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 
 - Make software open
 - Open meteo legal stuff
+
+# Project Your Experience app
+
+- Request form to build features.
+- I build it and it becomes a part of the app.
+  -- UI: thin sidebar dots for each app so they can switch over easily, default apps (like the browser - new install - prompted "would u like to make it the default?")
+- A personalized custom single-use app store
+  -- I want a "tree builder" app
+  --And other ideas
