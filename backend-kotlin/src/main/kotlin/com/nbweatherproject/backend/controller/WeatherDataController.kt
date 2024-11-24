@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/wd")
 class WeatherDataController(private val weatherDataService: WeatherDataService) {
-
     @PostMapping
     fun createWeatherData(@RequestBody request: WeatherDataRequest): ResponseEntity<List<WeatherData>> {
         return try {

@@ -26,8 +26,8 @@ const getWindIcon = (windSpeed: number) => {
 export const columns = [
   columnHelper.accessor("date", {
     cell: (info) => {
-      const date = info.getValue().toString().split("-");
-      return date[2];
+      const date = new Date(info.getValue());
+      return date.getUTCDate();
     },
     header: () => <span>Date</span>,
   }),
