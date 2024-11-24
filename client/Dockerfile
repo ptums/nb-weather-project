@@ -1,31 +1,40 @@
-# Build stage
-FROM node:18-alpine as build
+# Use an official Node runtime as the base image
+FROM node:18 as build
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json (if available)
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies
 RUN npm i
 
-# Copy the rest of the code
+# Copy the rest of the application code
 COPY . .
 
 # Build the app
 RUN npm run build
 
-# Serve stage
-FROM nginx:alpine
+# Use a smaller base image for the production stage
+FROM node:18-slim
 
-# Copy the build output to replace the default nginx contents.
-COPY --from=build /app/dist /usr/share/nginx/html
+# Set the working directory in the container
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+# Copy the built assets from the build stage
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./package.json
 
+# Install only production dependencies
+RUN npm i --only=production
 
+# Install serve to run the application
+RUN npm install -g serve
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Command to run the app
+CMD ["serve", "-s", "dist", "-l", "3000"]
+
