@@ -14,10 +14,7 @@ RUN npm install
 COPY tsconfig.json ./
 COPY src ./src
 
-
-
-# Build the TypeScript project
-RUN npm run build
+COPY .env.dev ./
 
 # Copy Prisma schema and generate Prisma client
 COPY prisma ./prisma
@@ -26,6 +23,6 @@ RUN npx prisma generate
 # Expose the port the app runs on
 EXPOSE 8080
 
-# Define the command to run the app
-CMD ["node", "dist/index.js"]
+# Define the command to run the app in development mode
+CMD ["npm", "run", "dev"]
 

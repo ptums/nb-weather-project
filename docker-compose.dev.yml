@@ -5,28 +5,55 @@ services:
     image: mariadb:10.6
     container_name: mariadb-dev
     restart: always
+    env_file: .env.dev
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: nbweather
-      MYSQL_USER: nbuser
-      MYSQL_PASSWORD: nbpassword
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command:
+      - --init-file
+      - /docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  prisma-migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: prisma-migrate
+    env_file: .env.dev
+    environment:
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npx prisma migrate deploy
 
   api:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: spring-api-dev
+    container_name: ts-api-dev
     ports:
       - "8080:8080"
+    env_file: .env.dev
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/nbweather
-      - SPRING_DATASOURCE_USERNAME=nbuser
-      - SPRING_DATASOURCE_PASSWORD=nbpassword
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      prisma-migrate:
+        condition: service_completed_successfully
+    command: sh -c "npx prisma generate && npm run dev"
 
   client:
     build:

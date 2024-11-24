@@ -1,0 +1,5 @@
+.env*
+.vscode
+init.sql
+.ignorefile
+.DS_STORE
