@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Weather API using Express.js, MySQL, and Prisma ORM",
   "main": "dist/index.js",
+  "engines": {
+    "node": "18.18.0"
+  },
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
