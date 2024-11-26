@@ -15,11 +15,17 @@ export const RouteButton = ({
 }: RouteButtonProps) => {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ display: open ? "block" : "none" }}>
-      <button className="bg-transparent text-rose-900 hover:text-rose-900 hover:bg-transparent hover:underline focus:text-rose-900 focus:underline p-0 m-0 h-4">
+    <div>
+      <button
+        onClick={() => setOpen(true)}
+        className="bg-transparent text-rose-900 hover:text-rose-900 hover:bg-transparent hover:underline focus:text-rose-900 focus:underline p-0 m-0 h-4"
+      >
         <span className=" text-rose-900">{label}</span>
       </button>
-      <div className="flex flex-col space-y-2">
+      <div
+        className="flex flex-col space-y-2"
+        style={{ display: open ? "block" : "none" }}
+      >
         <button
           onClick={() => {
             onVisualize();

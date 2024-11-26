@@ -40,11 +40,10 @@ interface DateForm {
 }
 
 export function DateForm({ setQuery, setToggleView }: DateForm) {
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const [month, setMonth] = useState(defaultMonth);
+  const [year, setYear] = useState(defaultYear);
 
   const {
-    handleSubmit,
     formState: { errors },
     setValue,
   } = useForm<FormData>({
@@ -55,37 +54,21 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
     },
   });
 
-  // const onSubmit = (data:) => {
-  //   const dateQuery = `${data.month as string}-${
-  //     data.year.toString() as string
-  //   }`;
+  const sendMonthYear = (month: string, year: number) => {
+    if (year && month) {
+      const dateQuery = `${month}-${year}`;
 
-  //   setQuery(dateQuery);
-  //   setToggleView(true);
-  // };
-
-  const sendMontYear = (data: FormEvent<HTMLFormElement>) => {
-    // const dateQuery = `${data.month as string}-${
-    //   data.year.toString() as string
-    // }`;
-
-    console.log({
-      data,
-    });
-
-    // setQuery(dateQuery);
-    // setToggleView(true);
+      setQuery(dateQuery);
+      setToggleView(true);
+    }
   };
 
   return (
     <div className="w-full sm:w-3/4">
-      <form
-        onChange={sendMontYear}
-        className="flex flex-col sm:flex-row items-center gap-4"
-      >
+      <form className="flex flex-col sm:flex-row items-center gap-4">
         <div className="w-full sm:w-44">
           <MonthPicker
-            value={month || defaultMonth}
+            value={month}
             onChange={(value) => {
               setMonth(value);
               setValue("month", value, { shouldValidate: true });
@@ -97,13 +80,16 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
         </div>
         <div className="w-full sm:w-32">
           <YearInput
-            value={parseInt(year) || defaultYear}
+            value={year}
             onChange={(value) => {
-              setYear(value.toString());
+              console.log(value);
+              // console.log(year);
+              setYear(value);
               setValue("year", value, { shouldValidate: true });
             }}
             min={1850}
             max={new Date().getFullYear()}
+            onBlurHandler={() => sendMonthYear(month, year)}
           />
           {errors.year && (
             <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>

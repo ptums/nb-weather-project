@@ -60,6 +60,8 @@ export const Sidebar = ({
     [setCompareList]
   );
 
+  console.log("items", items);
+
   return (
     <div
       className={classNames("h-screen w-2/12 border-r bg-white", {
