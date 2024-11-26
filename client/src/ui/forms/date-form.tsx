@@ -4,9 +4,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { MonthPicker } from "./month-picker";
 import { YearInput } from "./year-input";
-import { Button } from "@/components/ui/button";
 
-import { defaultMonth, defaultYear } from "@/utils";
+import { defaultMonth, defaultYear } from "../../utils";
 
 const schema = yup.object().shape({
   month: yup
@@ -37,15 +36,21 @@ type FormData = yup.InferType<typeof schema>;
 
 interface DateForm {
   setQuery: (query: string) => void;
-  setToggleView: (toggleView: boolean) => void;
+  setComparisonMode: (comparisonMode: boolean) => void;
+  comparisonMode: boolean;
+  addToCompareList: (query: string) => void;
 }
 
-export function DateForm({ setQuery, setToggleView }: DateForm) {
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+export function DateForm({
+  setQuery,
+  setComparisonMode,
+  comparisonMode,
+  addToCompareList,
+}: DateForm) {
+  const [month, setMonth] = useState(defaultMonth);
+  const [year, setYear] = useState(defaultYear);
 
   const {
-    handleSubmit,
     formState: { errors },
     setValue,
   } = useForm<FormData>({
@@ -56,58 +61,60 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    const dateQuery = `${data.month as string}-${
-      data.year.toString() as string
-    }`;
+  const sendMonthYear = (month: string, year: number) => {
+    if (year && month) {
+      const dateQuery = `${month}-${year}`;
 
-    setQuery(dateQuery);
-    setToggleView(true);
+      if (comparisonMode) {
+        addToCompareList(dateQuery);
+      } else {
+        setQuery(dateQuery);
+      }
+    }
   };
 
   return (
-    <div className="w-full sm:w-3/4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col sm:flex-row items-center gap-4"
-      >
-        <div className="w-full sm:w-44">
-          <MonthPicker
-            value={month || defaultMonth}
-            onChange={(value) => {
-              setMonth(value);
-              setValue("month", value, { shouldValidate: true });
-            }}
-          />
-          {errors.month && (
-            <p className="text-red-500 text-sm mt-1">{errors.month.message}</p>
-          )}
-        </div>
-        <div className="w-full sm:w-32">
-          <YearInput
-            value={parseInt(year) || defaultYear}
-            onChange={(value) => {
-              setYear(value.toString());
-              setValue("year", value, { shouldValidate: true });
-            }}
-            min={1850}
-            max={new Date().getFullYear()}
-          />
-          {errors.year && (
-            <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>
-          )}
-        </div>
-        <Button
-          type="button"
-          onClick={() => setToggleView(false)}
-          variant="compare"
-        >
-          Compare
-        </Button>
-        <Button type="submit" variant="go">
-          Go
-        </Button>
-      </form>
-    </div>
+    <>
+      <div className="w-full sm:w-3/4">
+        <form className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="w-full sm:w-44">
+            <MonthPicker
+              value={month}
+              onChange={(value) => {
+                setMonth(value);
+                setValue("month", value, { shouldValidate: true });
+              }}
+            />
+            {errors.month && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.month.message}
+              </p>
+            )}
+          </div>
+          <div className="w-full sm:w-32">
+            <YearInput
+              value={year}
+              onChange={(value) => {
+                setYear(value);
+                setValue("year", value, { shouldValidate: true });
+              }}
+              min={1850}
+              max={new Date().getFullYear()}
+              onBlurHandler={() => sendMonthYear(month, year)}
+            />
+            {errors.year && (
+              <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setComparisonMode(!comparisonMode)}
+            className="bg-gray-100 text-gray-800 rounded-full px-6 py-2 shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out"
+          >
+            {comparisonMode ? "Table" : "Compare"}
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

@@ -6,18 +6,17 @@ import {
   createWeatherData,
   createWeatherQueries,
   deleteWeatherQueries,
+  findWeatherDataById,
 } from "./utils/api";
 import { WeatherQueries, WeatherData, CompareWeatherData } from "./utils/types";
 import { useCallback, useEffect, useId, useState } from "react";
-import { defaultMonth, defaultYear } from "./utils";
+import { convertToMonthsYears, defaultMonth, defaultYear } from "./utils";
 
 const defaultQuery = `${defaultMonth}-${defaultYear}`;
-
 const NBWeatherApp = () => {
-  const [toggleView, setToggleView] = useState<boolean>(true);
   const [query, setQuery] = useState<string>(defaultQuery);
   const [userId, setUserId] = useState<string | null>(null);
-  const [compareList, setCompareList] = useState<CompareWeatherData[]>([]);
+  const [comparisonMode, setComparisonMode] = useState(false);
   const randomId = useId();
 
   useEffect(() => {
@@ -35,7 +34,7 @@ const NBWeatherApp = () => {
   const { data: weatherQueryByUser, refetch } = useQuery({
     queryKey: ["weatherQueryByUser", userId],
     queryFn: () => findWeatherQueriesByUserId(userId as string),
-    enabled: !!userId,
+    enabled: userId !== null,
   });
 
   const queries = useQueries({
@@ -76,51 +75,115 @@ const NBWeatherApp = () => {
   // Use the results
   const weatherData = weatherDataResult.data;
 
-  const clearCompareList = useCallback(() => {
-    setCompareList([]);
-  }, [setCompareList]);
-
   const clearHistoryList = useCallback(() => {
     (weatherQueryByUser as WeatherQueries[]).forEach(async (data) => {
       await deleteWeatherQueries(data?.id);
     });
   }, [weatherQueryByUser]);
 
+  const [compareList, setCompareList] = useState<CompareWeatherData[]>([]);
+
+  const clearCompareList = useCallback(() => {
+    setCompareList([]);
+  }, [setCompareList]);
+
+  // const removeFromCompareList = useCallback(
+  //   (id: string) => {
+  //     setCompareList((prevList) => prevList.filter((item) => item.id !== id));
+  //   },
+  //   [setCompareList]
+  // );
+
+  const addToCompareList = useCallback(
+    async (query: string) => {
+      const month = convertToMonthsYears(query, 0);
+      const year = convertToMonthsYears(query, 1);
+
+      const results = await searchWeatherQueries(query);
+
+      if (results.length > 0) {
+        const weatherData = await findWeatherDataById(results[0]?.id);
+
+        const newItem = {
+          weatherData,
+          month,
+          year,
+          id: Date.now().toString(),
+          query,
+        };
+
+        setCompareList((prevList) => [...prevList, newItem]);
+      } else {
+        const storedUserId = localStorage.getItem("user_id");
+        if (storedUserId) {
+          const createWeatherQuery = await createWeatherQueries(
+            query,
+            storedUserId as string
+          );
+
+          console.log({
+            createWeatherQuery,
+          });
+
+          const newWeatherData = await createWeatherData(
+            query,
+            createWeatherQuery.id as number
+          );
+
+          console.log({
+            newWeatherData,
+          });
+
+          const newItem = {
+            weatherData: newWeatherData,
+            month,
+            year,
+            id: Date.now().toString(),
+            query,
+          };
+
+          setCompareList((prevList) => [...prevList, newItem]);
+        }
+      }
+    },
+    [setCompareList]
+  );
+
   return (
-    <main className="flex">
-      <Sidebar
-        title="History"
-        items={(weatherQueryByUser as WeatherQueries[]) || []}
-        setQuery={setQuery}
-        setToggleView={setToggleView}
-        setCompareList={setCompareList}
-        handleDelete={clearHistoryList}
-      />
-      <Sidebar
-        title="Compare"
-        items={compareList}
-        setQuery={setQuery}
-        setToggleView={setToggleView}
-        setCompareList={setCompareList}
-        handleDelete={clearCompareList}
-      />
-      <div className="flex flex-col w-full py-8 px-4 bg-rose-100">
-        <SiteTitle />
-        <DateForm setQuery={setQuery} setToggleView={setToggleView} />
-        {weatherData && (
-          <div className="min-h-screen w-full sm:w-3/4">
-            {toggleView ? (
+    <>
+      <main className="flex">
+        <Sidebar
+          weatherQueries={(weatherQueryByUser as WeatherQueries[]) || []}
+          compareWeather={compareList || []}
+          setQuery={setQuery}
+          clearQueries={clearHistoryList}
+          clearCompare={clearCompareList}
+          comparisonMode={comparisonMode}
+          compareList={compareList}
+          addToCompareList={addToCompareList}
+        />
+        <div className="flex flex-col w-full py-8 px-4 bg-rose-100">
+          <SiteTitle />
+          <DateForm
+            setQuery={setQuery}
+            setComparisonMode={setComparisonMode}
+            comparisonMode={comparisonMode}
+            addToCompareList={addToCompareList}
+          />
+          {weatherData && !comparisonMode && (
+            <div className="min-h-screen w-full sm:w-3/4">
               <WeatherTable
                 weatherData={weatherData as WeatherData[]}
                 query={query}
               />
-            ) : (
-              <CompareView compareList={compareList} />
-            )}
-          </div>
-        )}
-      </div>
-    </main>
+            </div>
+          )}
+          {compareList && comparisonMode && (
+            <CompareView compareList={compareList} />
+          )}
+        </div>
+      </main>
+    </>
   );
 };
 

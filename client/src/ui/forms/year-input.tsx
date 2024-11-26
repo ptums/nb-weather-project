@@ -1,11 +1,11 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
 
 type YearInputProps = {
   value: number;
   onChange: (value: number) => void;
   min: number;
   max: number;
+  onBlurHandler: () => void;
 };
 
 export const YearInput: React.FC<YearInputProps> = ({
@@ -13,9 +13,10 @@ export const YearInput: React.FC<YearInputProps> = ({
   onChange,
   min,
   max,
+  onBlurHandler,
 }) => {
   return (
-    <Input
+    <input
       type="number"
       value={value.toString() === "" ? "" : value}
       onChange={(e) => {
@@ -26,7 +27,8 @@ export const YearInput: React.FC<YearInputProps> = ({
       min={min}
       max={max}
       placeholder="Enter Year"
-      className="bg-white"
+      className="bg-white p-1 rounded w-25"
+      id="year"
       onBlur={() => {
         if (value.toString() === "") {
           onChange(min);
@@ -35,6 +37,8 @@ export const YearInput: React.FC<YearInputProps> = ({
         } else if (typeof value === "number" && value > max) {
           onChange(max);
         }
+
+        onBlurHandler();
       }}
     />
   );
