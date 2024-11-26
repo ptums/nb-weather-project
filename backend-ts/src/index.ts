@@ -5,7 +5,7 @@ import routes from "./routes";
 import cors from "cors";
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: "*",
   credentials: true,

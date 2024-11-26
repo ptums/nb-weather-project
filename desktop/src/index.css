@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+.table-container {
+  height: 550px;
+  overflow: auto;
+}
+
+.bg-transparent-2 {
+  background-color: transparent !important;
+  outline: 0 !important;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  height: auto;
+  margin-left: 18.5px;
+}

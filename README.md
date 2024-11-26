@@ -4,11 +4,17 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 
 ## Post MVP
 
-- IndexDB compare sidebar data
-- Large dialogue for comparison mode
-- 5$ per unique location - session deletes on refresh (stripe)
-- analtics (use excalidraws one)
-- feature request from
+### Comparison Mode
+
+- Clean up bargraph view
+- Make it in a large pop up modal
+
+## Beta
+
+- Create a desktop shell
+  -- It stores a list of an app list manifest and lists their details in a sidebar
+  -- When I get NB Weather in a good place. I want to start family tree builder.
+  -- I want to be able to toggle between these apps
 
 ## Opimizations
 
@@ -16,17 +22,3 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 - Spike: DB compression/optimzation strategy
 - CRON: fetch from open meteo daily to index month/year entries
 - Make it a PWA that works offline first
-
-## legal
-
-- Make software open
-- Open meteo legal stuff
-
-# Project Your Experience app
-
-- Request form to build features.
-- I build it and it becomes a part of the app.
-  -- UI: thin sidebar dots for each app so they can switch over easily, default apps (like the browser - new install - prompted "would u like to make it the default?")
-- A personalized custom single-use app store
-  -- I want a "tree builder" app
-  --And other ideas
