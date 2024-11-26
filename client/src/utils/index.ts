@@ -65,6 +65,10 @@ export function formatCompareWeatherData(
       // Low temperature
       dataPoint[`${key}Low`] = data.weatherData[index]?.lowTemp ?? null;
 
+      // fix date
+      const dateStr = new Date(data.weatherData[index]?.date);
+      dataPoint.date = dateStr.getUTCDate();
+
       // Average temperature (for simplicity in the chart)
       const highTemp = data.weatherData[index]?.highTemp;
       const lowTemp = data.weatherData[index]?.lowTemp;

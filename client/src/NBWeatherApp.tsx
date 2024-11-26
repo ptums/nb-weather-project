@@ -87,12 +87,12 @@ const NBWeatherApp = () => {
     setCompareList([]);
   }, [setCompareList]);
 
-  // const removeFromCompareList = useCallback(
-  //   (id: string) => {
-  //     setCompareList((prevList) => prevList.filter((item) => item.id !== id));
-  //   },
-  //   [setCompareList]
-  // );
+  const removeFromCompareList = useCallback(
+    (id: string) => {
+      setCompareList((prevList) => prevList.filter((item) => item.id !== id));
+    },
+    [setCompareList]
+  );
 
   const addToCompareList = useCallback(
     async (query: string) => {
@@ -121,18 +121,10 @@ const NBWeatherApp = () => {
             storedUserId as string
           );
 
-          console.log({
-            createWeatherQuery,
-          });
-
           const newWeatherData = await createWeatherData(
             query,
             createWeatherQuery.id as number
           );
-
-          console.log({
-            newWeatherData,
-          });
 
           const newItem = {
             weatherData: newWeatherData,
@@ -161,6 +153,7 @@ const NBWeatherApp = () => {
           comparisonMode={comparisonMode}
           compareList={compareList}
           addToCompareList={addToCompareList}
+          removeFromCompareList={removeFromCompareList}
         />
         <div className="flex flex-col w-full py-8 px-4 bg-rose-100">
           <SiteTitle />

@@ -9,6 +9,7 @@ interface SidebarProps {
   comparisonMode: boolean;
   compareList: CompareWeatherData[];
   addToCompareList: (query: string) => void;
+  removeFromCompareList: (id: string) => void;
 }
 
 export const Sidebar = ({
@@ -19,6 +20,7 @@ export const Sidebar = ({
   clearCompare,
   comparisonMode,
   addToCompareList,
+  removeFromCompareList,
 }: SidebarProps) => {
   return (
     <div className="h-screen w-2/12 border-r bg-white border-silver">
@@ -54,7 +56,7 @@ export const Sidebar = ({
               })}
         </ul>
         {comparisonMode && (
-          <>
+          <div className="mt-4">
             <h2>
               <button
                 onClick={() => clearCompare()}
@@ -71,7 +73,7 @@ export const Sidebar = ({
                     return (
                       <li
                         key={index}
-                        onClick={() => setQuery(item.query)}
+                        onClick={() => removeFromCompareList(item.id)}
                         className="flex items-center space-x-2 text-sm tracking-tight font-semibold text-rose-600 cursor-pointer hover:text-rose-900"
                       >
                         <span>{item.query}</span>
@@ -79,7 +81,7 @@ export const Sidebar = ({
                     );
                   })}
             </ul>
-          </>
+          </div>
         )}
       </div>
     </div>
