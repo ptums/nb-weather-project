@@ -9,6 +9,7 @@ This project aims to make visualizing historical weather of New Brunswick, NJ ea
 - 5$ per unique location - session deletes on refresh (stripe)
 - analtics (use excalidraws one)
 - feature request from
+- set up containerization
 
 ## Opimizations
 
