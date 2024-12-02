@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId, useState, useEffect } from "react";
 import {
+  SITE_DEFAULTS,
   WEAHTER_DATA_ENDPOINT,
   WEAHTER_QUERY_ENDPOINT,
 } from "./utils/constants";
@@ -101,6 +102,7 @@ export function NBWeatherProjectApp() {
 
   return (
     <div className="p-4">
+      <h1 className="text-xl font-semibold mb-2">{SITE_DEFAULTS.title}</h1>
       <div className="flex flex-row justify-between">
         <DateForm
           handleSearch={(searchQuery) => {
