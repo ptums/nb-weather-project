@@ -4,6 +4,8 @@ import { PrismaClient } from "@prisma/client";
 import routes from "./routes";
 import cors from "cors";
 
+import path from "path";
+
 const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -11,7 +13,12 @@ const corsOptions = {
   credentials: true,
 };
 
-dotenv.config();
+dotenv.config({
+  path: path.resolve(
+    process.cwd(),
+    `.env.${process.env.NODE_ENV || "development"}`
+  ),
+});
 
 const app = express();
 const prisma = new PrismaClient();

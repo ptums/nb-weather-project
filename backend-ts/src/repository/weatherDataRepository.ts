@@ -1,29 +1,14 @@
-import { PrismaClient } from "@prisma/client";
-import { WeatherData } from "../types";
+import { PrismaClient, WeatherData } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const WeatherDataRepository = {
-  findByQueryId: async (queryId: number): Promise<WeatherData[]> => {
-    return prisma.weatherData.findMany({
-      where: { queryId },
+  create: async (
+    weatherData: Omit<WeatherData, "id">
+  ): Promise<WeatherData> => {
+    return prisma.weatherData.create({
+      data: weatherData,
     });
-  },
-
-  saveAll: async (
-    weatherDataList: Omit<WeatherData, "id">[]
-  ): Promise<WeatherData[]> => {
-    return prisma.$transaction(
-      weatherDataList.map((data) =>
-        prisma.weatherData.create({
-          data,
-        })
-      )
-    );
-  },
-
-  findAll: async (): Promise<WeatherData[]> => {
-    return prisma.weatherData.findMany();
   },
 
   findById: async (id: number): Promise<WeatherData | null> => {
@@ -32,9 +17,43 @@ export const WeatherDataRepository = {
     });
   },
 
-  save: async (weatherData: Omit<WeatherData, "id">): Promise<WeatherData> => {
-    return prisma.weatherData.create({
+  findByQueryId: async (queryId: number): Promise<WeatherData[]> => {
+    return prisma.weatherData.findMany({
+      where: { queryId },
+    });
+  },
+
+  update: async (
+    id: number,
+    weatherData: Partial<Omit<WeatherData, "id">>
+  ): Promise<WeatherData> => {
+    return prisma.weatherData.update({
+      where: { id },
       data: weatherData,
+    });
+  },
+
+  deleteById: async (id: number): Promise<void> => {
+    await prisma.weatherData.delete({
+      where: { id },
+    });
+  },
+
+  findAll: async (): Promise<WeatherData[]> => {
+    return prisma.weatherData.findMany();
+  },
+
+  findByDateRange: async (
+    startDate: Date,
+    endDate: Date
+  ): Promise<WeatherData[]> => {
+    return prisma.weatherData.findMany({
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
     });
   },
 
@@ -43,11 +62,5 @@ export const WeatherDataRepository = {
       where: { id },
     });
     return count > 0;
-  },
-
-  deleteById: async (id: number): Promise<void> => {
-    await prisma.weatherData.delete({
-      where: { id },
-    });
   },
 };

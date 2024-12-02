@@ -8,18 +8,24 @@ datasource db {
 }
 
 model WeatherData {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   highTemp  Float
   lowTemp   Float
   weather   String
   windSpeed Float
   date      DateTime
+  query     WeatherQueries @relation(fields: [queryId], references: [id])
   queryId   Int
 }
 
 model WeatherQueries {
   id           Int           @id @default(autoincrement())
   query        String
-  userId       String
+  weatherData  WeatherData[]
+  users        User[]
 }
 
+model User {
+  id        Int             @id @default(autoincrement())
+  queries   WeatherQueries[]
+}
