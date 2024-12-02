@@ -166,20 +166,38 @@ export function NBWeatherProjectApp() {
                   <WeatherTable weatherData={fetchWeatherMutation.data} />
                 </>
               )}
+              {fetchWeatherMutation.status.includes("idle") && (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-400 text-xl font-semibold">
+                    Search for weather records
+                  </p>
+                </div>
+              )}
             </>
           )}
-          {mode.includes("graph") && fetchWeatherMutation.isSuccess && (
+          {mode.includes("graph") && (
             <>
               <h2 className="text-lg font-semibold">Compare months</h2>
-              <button
-                className="underline mb-2"
-                onClick={() => {
-                  setCompareList([]);
-                }}
-              >
-                Clear
-              </button>
-              <CompareView compareList={compareList} />
+              {fetchWeatherMutation.status.includes("idle") ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-400 text-xl font-semibold">
+                    Compare weather records from history list
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <button
+                    className="underline mb-2"
+                    onClick={() => {
+                      fetchWeatherMutation.reset();
+                      setCompareList([]);
+                    }}
+                  >
+                    Clear
+                  </button>
+                  <CompareView compareList={compareList} />
+                </>
+              )}
             </>
           )}
         </div>
