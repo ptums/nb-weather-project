@@ -1,5 +1,4 @@
 import React from "react";
-import { Input } from "@/components/ui/input";
 
 type YearInputProps = {
   value: number;
@@ -15,10 +14,10 @@ export const YearInput: React.FC<YearInputProps> = ({
   max,
 }) => {
   return (
-    <Input
+    <input
       type="number"
       value={value.toString() === "" ? "" : value}
-      onChange={(e) => {
+      onChange={(e: { target: { value: string } }) => {
         const newValue =
           e.target.value === "" ? "" : parseInt(e.target.value, 10);
         onChange(newValue as number);
@@ -26,7 +25,7 @@ export const YearInput: React.FC<YearInputProps> = ({
       min={min}
       max={max}
       placeholder="Enter Year"
-      className="bg-white"
+      className="basic-inputs"
       onBlur={() => {
         if (value.toString() === "") {
           onChange(min);

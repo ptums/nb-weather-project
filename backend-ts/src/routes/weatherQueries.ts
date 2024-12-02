@@ -4,7 +4,7 @@ import { WeatherQueriesRepository } from "../repository";
 const router = express.Router();
 
 // Create a new weather query
-router.post("/wq", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const weatherQueryData = req.body;
     const createdQuery = await WeatherQueriesRepository.create(
@@ -18,7 +18,7 @@ router.post("/wq", async (req: Request, res: Response) => {
 });
 
 // Get a weather query by ID
-router.get("/wq/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const query = await WeatherQueriesRepository.findById(id);
@@ -34,9 +34,9 @@ router.get("/wq/:id", async (req: Request, res: Response) => {
 });
 
 // Get all weather queries by user ID
-router.get("/wq/user/:userId", async (req: Request, res: Response) => {
+router.get("/user/:userId", async (req: Request, res: Response) => {
   try {
-    const userId = parseInt(req.params.userId);
+    const userId = req.params.userId;
     const queries = await WeatherQueriesRepository.findByUserId(userId);
     res.json(queries);
   } catch (error) {
@@ -46,7 +46,7 @@ router.get("/wq/user/:userId", async (req: Request, res: Response) => {
 });
 
 // Update a weather query
-router.put("/wq/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const weatherQueryData = req.body;
@@ -62,7 +62,7 @@ router.put("/wq/:id", async (req: Request, res: Response) => {
 });
 
 // Delete a weather query
-router.delete("/wq/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     await WeatherQueriesRepository.deleteById(id);
@@ -74,7 +74,7 @@ router.delete("/wq/:id", async (req: Request, res: Response) => {
 });
 
 // Get all weather queries
-router.get("/wq", async (_req: Request, res: Response) => {
+router.get("/", async (_req: Request, res: Response) => {
   try {
     const queries = await WeatherQueriesRepository.findAll();
     res.json(queries);
@@ -86,7 +86,7 @@ router.get("/wq", async (_req: Request, res: Response) => {
 
 // Add a user to a weather query
 router.post(
-  "/wq/:queryId/users/:userId",
+  "/queryId/:queryId/users/:userId",
   async (req: Request, res: Response) => {
     try {
       const queryId = parseInt(req.params.queryId);

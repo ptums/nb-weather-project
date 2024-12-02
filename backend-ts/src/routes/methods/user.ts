@@ -21,6 +21,19 @@ export async function findUserById(id: number): Promise<User | null> {
   }
 }
 
+// findByUniqueId
+
+export async function findUserByUniqueId(
+  uniqueId: string
+): Promise<User | null> {
+  try {
+    return await UserRepository.findByUniqueId(uniqueId);
+  } catch (error) {
+    console.error(`Error finding user with id ${uniqueId}:`, error);
+    return null;
+  }
+}
+
 export async function deleteUser(id: number): Promise<boolean> {
   try {
     await UserRepository.deleteById(id);

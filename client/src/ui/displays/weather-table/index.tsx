@@ -11,10 +11,8 @@ import { WeatherData } from "@/utils/types";
 
 export const WeatherTable = ({
   weatherData,
-  query,
 }: {
   weatherData: WeatherData[];
-  query: string;
 }) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -35,12 +33,6 @@ export const WeatherTable = ({
 
   return (
     <div className="mt-6 p-2">
-      <div className="flex flex-row space-between mb-6">
-        <p className="mr-4">
-          <strong>Date: </strong>
-          {query}
-        </p>
-      </div>
       <div ref={parentRef} className="table-container">
         <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
           <table className="min-w-full divide-y divide-gray-200">

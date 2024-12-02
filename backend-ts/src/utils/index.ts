@@ -1,2 +1,2 @@
 export * from "./fetchWeatherData";
-export * from "./weatherDataMapper";
+export * from "./mapWeatherCode";

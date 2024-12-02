@@ -8,6 +8,7 @@ async function main() {
     data: {
       // Add any additional fields your User model might have
       // For example: email: 'admin@example.com', name: 'Admin User'
+      uniqueId: "admin1",
     },
   });
 
@@ -44,7 +45,6 @@ async function main() {
 main()
   .catch((e) => {
     console.error(e);
-    // @ts-expect-error
     process.exit(1);
   })
   .finally(async () => {

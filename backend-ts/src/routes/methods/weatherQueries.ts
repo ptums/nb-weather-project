@@ -24,7 +24,7 @@ export async function findWeatherQueryById(
 }
 
 export async function findWeatherQueriesByUserId(
-  userId: number
+  userId: string
 ): Promise<WeatherQueries[]> {
   try {
     return await WeatherQueriesRepository.findByUserId(userId);
@@ -69,6 +69,10 @@ export async function addUserToWeatherQuery(
   queryId: number,
   userId: number
 ): Promise<WeatherQueries | null> {
+  console.log({
+    queryId,
+    userId,
+  });
   try {
     return await WeatherQueriesRepository.addUserToQuery(queryId, userId);
   } catch (error) {
@@ -108,6 +112,21 @@ export async function weatherQueryExists(id: number): Promise<boolean> {
     return await WeatherQueriesRepository.existsById(id);
   } catch (error) {
     console.error(`Error checking existence of weather query ${id}:`, error);
+    return false;
+  }
+}
+
+export async function userWeatherQueryExists(
+  queryId: number,
+  userId: string
+): Promise<boolean> {
+  try {
+    return await WeatherQueriesRepository.existsUser(queryId, userId);
+  } catch (error) {
+    console.error(
+      `Error checking existence of weather queryId ${queryId}, userId ${userId}:`,
+      error
+    );
     return false;
   }
 }

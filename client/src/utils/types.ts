@@ -1,5 +1,5 @@
 export type WeatherData = {
-  date: number;
+  date: string;
   highTemp: number;
   lowTemp: number;
   weather:
@@ -17,7 +17,6 @@ export type WeatherData = {
     | "SUNNY"
     | "UNKNOWN";
   windSpeed: number;
-  queryId: number;
 };
 
 export type WeatherQueries = {

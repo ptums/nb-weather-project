@@ -15,6 +15,16 @@ export const UserRepository = {
     });
   },
 
+  findByUniqueId: async (uniqueId: string): Promise<User | null> => {
+    const results = await prisma.user.findFirst({
+      where: {
+        uniqueId,
+      },
+    });
+
+    return results;
+  },
+
   deleteById: async (id: number): Promise<void> => {
     await prisma.user.delete({
       where: { id },
