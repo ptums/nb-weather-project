@@ -25,7 +25,7 @@ export const CompareView = ({ compareList }: CompareView) => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
+        <XAxis dataKey="day" />
         <YAxis unit="°F" />
         <Tooltip />
         <Legend />

@@ -1,131 +1,71 @@
 import express, { Request, Response } from "express";
-import {
-  createWeatherQueries,
-  getAllWeatherQueries,
-  getWeatherQueryById,
-  updateWeatherQueries,
-  getAllWeatherQueriesByUserId,
-  deleteWeatherQuery,
-  searchWeatherQueries,
-} from "./methods/weatherQueries";
+import { WeatherQueriesRepository } from "../repository";
 
 const router = express.Router();
 
+// Create a new weather query
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { query, userId } = req.body;
-
-    if (!query || !userId) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const createdQuery = await createWeatherQueries(query, userId);
+    const weatherQueryData = req.body;
+    const createdQuery = await WeatherQueriesRepository.create(
+      weatherQueryData
+    );
     res.status(201).json(createdQuery);
   } catch (error) {
     console.error("Error creating weather query:", error);
-    res.status(400).json({ error: "Failed to create weather query" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Get weather query by ID
-router.get("/i/:id", async (req: Request<{ id: string }>, res: Response) => {
+// Get a weather query by ID
+router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
+    const id = parseInt(req.params.id);
+    const query = await WeatherQueriesRepository.findById(id);
+    if (query) {
+      res.json(query);
+    } else {
+      res.status(404).json({ error: "Weather query not found" });
     }
-
-    const weatherQuery = await getWeatherQueryById(id);
-
-    if (!weatherQuery) {
-      return res.status(404).json({ error: "Weather query not found" });
-    }
-
-    res.status(200).json(weatherQuery);
   } catch (error) {
     console.error("Error fetching weather query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Get weather queries by user ID
-router.get(
-  "/u/:userId",
-  async (req: Request<{ userId: string }>, res: Response) => {
-    try {
-      const { userId } = req.params;
-
-      const weatherQueriesList = await getAllWeatherQueriesByUserId(userId);
-
-      if (weatherQueriesList.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "No weather queries found for this user" });
-      }
-
-      res.status(200).json(weatherQueriesList);
-    } catch (error) {
-      console.error("Error fetching weather queries:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  }
-);
-
-// Get all weather queries
-router.get("/", async (_req: Request, res: Response) => {
+// Get all weather queries by user ID
+router.get("/user/:userId", async (req: Request, res: Response) => {
   try {
-    const queries = await getAllWeatherQueries();
-    res.status(200).json(queries);
+    const userId = req.params.userId;
+    const queries = await WeatherQueriesRepository.findByUserId(userId);
+    res.json(queries);
   } catch (error) {
-    console.error("Error fetching all weather queries:", error);
+    console.error("Error fetching weather queries for user:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Update weather query
-router.put("/i/:id", async (req: Request, res: Response) => {
+// Update a weather query
+router.put("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
-    }
-
-    const { query } = req.body;
-
-    if (!query) {
-      return res.status(400).json({ error: "Missing query in request body" });
-    }
-
-    const existingQuery = await getWeatherQueryById(id);
-    if (!existingQuery) {
-      return res.status(404).json({ error: "Weather query not found" });
-    }
-
-    const updatedQuery = await updateWeatherQueries(id, query);
-    res.status(200).json(updatedQuery);
+    const id = parseInt(req.params.id);
+    const weatherQueryData = req.body;
+    const updatedQuery = await WeatherQueriesRepository.update(
+      id,
+      weatherQueryData
+    );
+    res.json(updatedQuery);
   } catch (error) {
     console.error("Error updating weather query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Delete weather query
-router.delete("/i/:id", async (req: Request<{ id: string }>, res: Response) => {
+// Delete a weather query
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
-    }
-
-    const existingQuery = await getWeatherQueryById(id);
-    if (!existingQuery) {
-      return res.status(404).json({ error: "Weather query not found" });
-    }
-
-    await deleteWeatherQuery(id);
+    const id = parseInt(req.params.id);
+    await WeatherQueriesRepository.deleteById(id);
     res.status(204).send();
   } catch (error) {
     console.error("Error deleting weather query:", error);
@@ -133,20 +73,80 @@ router.delete("/i/:id", async (req: Request<{ id: string }>, res: Response) => {
   }
 });
 
-// Search weather queries
-router.get("/s", async (req: Request, res: Response) => {
+// Get all weather queries
+router.get("/", async (_req: Request, res: Response) => {
   try {
-    const { query } = req.query;
+    const queries = await WeatherQueriesRepository.findAll();
+    res.json(queries);
+  } catch (error) {
+    console.error("Error fetching all weather queries:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-    if (!query) {
-      return res.status(400).json({ error: "Missing query parameter" });
+// Add a user to a weather query
+router.post(
+  "/queryId/:queryId/users/:userId",
+  async (req: Request, res: Response) => {
+    try {
+      const queryId = parseInt(req.params.queryId);
+      const userId = parseInt(req.params.userId);
+      const updatedQuery = await WeatherQueriesRepository.addUserToQuery(
+        queryId,
+        userId
+      );
+      res.json(updatedQuery);
+    } catch (error) {
+      console.error("Error adding user to weather query:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
+  }
+);
 
-    const results = await searchWeatherQueries(query as string);
-    res.status(200).json(results);
+// Remove a user from a weather query
+router.delete(
+  "/wq/:queryId/users/:userId",
+  async (req: Request, res: Response) => {
+    try {
+      const queryId = parseInt(req.params.queryId);
+      const userId = parseInt(req.params.userId);
+      const updatedQuery = await WeatherQueriesRepository.removeUserFromQuery(
+        queryId,
+        userId
+      );
+      res.json(updatedQuery);
+    } catch (error) {
+      console.error("Error removing user from weather query:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+
+// Find weather queries by query string
+router.get("/wq/search/:query", async (req: Request, res: Response) => {
+  try {
+    const query = req.params.query;
+    const queries = await WeatherQueriesRepository.findByQuery(query);
+    res.json(queries);
   } catch (error) {
     console.error("Error searching weather queries:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Check if a weather query exists
+router.head("/wq/:id", async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const exists = await WeatherQueriesRepository.existsById(id);
+    if (exists) {
+      res.status(200).send();
+    } else {
+      res.status(404).send();
+    }
+  } catch (error) {
+    console.error("Error checking weather query existence:", error);
+    res.status(500).send();
   }
 });
 

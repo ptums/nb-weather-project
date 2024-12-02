@@ -1,22 +1,19 @@
-import { OpenMeteoData, WeatherData, Weather } from "../types";
-
-export function mapOpenMeteoToWeatherData(
-  data: OpenMeteoData,
-  queryId: number
-): WeatherData[] {
-  console.log("queryId in mapper:", queryId);
-
-  return data.daily.time.map((time, index) => ({
-    date: new Date(time),
-    highTemp: data.daily.temperature_2m_max[index],
-    lowTemp: data.daily.temperature_2m_min[index],
-    queryId: queryId,
-    weather: mapWeatherCode(data.daily.weathercode[index]),
-    windSpeed: data.daily.windspeed_10m_max[index],
-  }));
+export enum Weather {
+  CLEAR = "CLEAR",
+  MAINLY_CLEAR = "MAINLY_CLEAR",
+  PARTLY_CLOUDY = "PARTLY_CLOUDY",
+  OVERCAST = "OVERCAST",
+  FOG = "FOG",
+  DRIZZLE = "DRIZZLE",
+  RAIN = "RAIN",
+  SNOW = "SNOW",
+  RAIN_SHOWERS = "RAIN_SHOWERS",
+  SNOW_SHOWERS = "SNOW_SHOWERS",
+  THUNDERSTORM = "THUNDERSTORM",
+  UNKNOWN = "UNKNOWN",
 }
 
-function mapWeatherCode(code: number): Weather {
+export function mapWeatherCode(code: number): Weather {
   switch (code) {
     case 0:
       return Weather.CLEAR;

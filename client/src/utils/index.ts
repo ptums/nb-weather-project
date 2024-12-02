@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { CompareWeatherData, FormattedChartData } from "./types";
+import { CompareWeatherData, FormattedChartData, WeatherData } from "./types";
 
 const currentDate = new Date();
 export const currentMonth = currentDate.getMonth();
@@ -65,6 +65,11 @@ export function formatCompareWeatherData(
       // Low temperature
       dataPoint[`${key}Low`] = data.weatherData[index]?.lowTemp ?? null;
 
+      // Day
+      dataPoint["day"] = new Date(data.weatherData[index]?.date)
+        .getUTCDate()
+        .toString();
+
       // Average temperature (for simplicity in the chart)
       const highTemp = data.weatherData[index]?.highTemp;
       const lowTemp = data.weatherData[index]?.lowTemp;
@@ -79,28 +84,25 @@ export function formatCompareWeatherData(
   });
 }
 
-// convert query to months/years
+export function buildComparionList(
+  weatherData: WeatherData[],
+  query: string
+): CompareWeatherData {
+  const [month, year] = query.split("-").map(Number);
+  const id = Date.now().toString();
 
-export function convertToMonthsYears(query: string, index: number) {
-  if (!query || typeof query !== "string") {
-    throw new Error("Invalid query: must be a non-empty string");
-  }
-
-  const parts = query.split("-");
-  if (parts.length !== 2) {
-    throw new Error('Invalid query format: expected "month-year"');
-  }
-
-  if (index !== 0 && index !== 1) {
-    throw new Error("Invalid index: must be 0 (for month) or 1 (for year)");
-  }
-
-  const parsedValue = parseInt(parts[index], 10);
-  if (isNaN(parsedValue)) {
-    throw new Error(
-      `Invalid ${index === 0 ? "month" : "year"}: must be a number`
-    );
-  }
-
-  return parsedValue;
+  return {
+    id,
+    month,
+    year,
+    query,
+    weatherData,
+  };
 }
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const buildApiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
+export const sortByDate = (data: WeatherData[]) => {
+  return data.sort((a, b) => (new Date(a.date) > new Date(b.date) ? 1 : -1));
+};

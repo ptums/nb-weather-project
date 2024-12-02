@@ -33,7 +33,7 @@ export const columns = [
   }),
   columnHelper.accessor("windSpeed", {
     cell: (info) => {
-      const windSpeed = info.getValue();
+      const windSpeed = info.getValue() as number;
       return (
         <div className="flex items-center">
           {getWindIcon(windSpeed)}
@@ -46,6 +46,7 @@ export const columns = [
   columnHelper.accessor("weather", {
     cell: (info) => {
       const weather = info.getValue();
+
       switch (weather) {
         case "CLEAR":
           return <Sun className="text-yellow-400" />;

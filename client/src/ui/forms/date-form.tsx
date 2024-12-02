@@ -4,8 +4,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { MonthPicker } from "./month-picker";
 import { YearInput } from "./year-input";
-import { Button } from "@/components/ui/button";
-
 import { defaultMonth, defaultYear } from "@/utils";
 
 const schema = yup.object().shape({
@@ -36,11 +34,10 @@ const schema = yup.object().shape({
 type FormData = yup.InferType<typeof schema>;
 
 interface DateForm {
-  setQuery: (query: string) => void;
-  setToggleView: (toggleView: boolean) => void;
+  handleSearch: (query: string) => void;
 }
 
-export function DateForm({ setQuery, setToggleView }: DateForm) {
+export function DateForm({ handleSearch }: DateForm) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
@@ -61,8 +58,7 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
       data.year.toString() as string
     }`;
 
-    setQuery(dateQuery);
-    setToggleView(true);
+    handleSearch(dateQuery);
   };
 
   return (
@@ -90,23 +86,14 @@ export function DateForm({ setQuery, setToggleView }: DateForm) {
               setYear(value.toString());
               setValue("year", value, { shouldValidate: true });
             }}
-            min={1850}
+            min={1940}
             max={new Date().getFullYear()}
           />
           {errors.year && (
             <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>
           )}
         </div>
-        <Button
-          type="button"
-          onClick={() => setToggleView(false)}
-          variant="compare"
-        >
-          Compare
-        </Button>
-        <Button type="submit" variant="go">
-          Go
-        </Button>
+        <button className="underline">Search</button>
       </form>
     </div>
   );
