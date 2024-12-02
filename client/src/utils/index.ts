@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { CompareWeatherData, FormattedChartData } from "./types";
+import { CompareWeatherData, FormattedChartData, WeatherData } from "./types";
 
 const currentDate = new Date();
 export const currentMonth = currentDate.getMonth();
@@ -52,7 +52,7 @@ export function formatCompareWeatherData(
     .slice(0, maxDataPoints);
 
   return dates.map((date, index) => {
-    const dataPoint: FormattedChartData = { date };
+    const dataPoint: FormattedChartData = { date: parseInt(date) };
 
     compareWeatherData.forEach((data) => {
       const monthName = getMonthName(data.month);
@@ -79,28 +79,25 @@ export function formatCompareWeatherData(
   });
 }
 
-// convert query to months/years
+export async function buildComparionList(
+  weatherData: WeatherData[],
+  query: string
+) {
+  const [month, year] = query.split("-").map(Number);
 
-export function convertToMonthsYears(query: string, index: number) {
-  if (!query || typeof query !== "string") {
-    throw new Error("Invalid query: must be a non-empty string");
-  }
+  const id = Date.now().toString();
 
-  const parts = query.split("-");
-  if (parts.length !== 2) {
-    throw new Error('Invalid query format: expected "month-year"');
-  }
-
-  if (index !== 0 && index !== 1) {
-    throw new Error("Invalid index: must be 0 (for month) or 1 (for year)");
-  }
-
-  const parsedValue = parseInt(parts[index], 10);
-  if (isNaN(parsedValue)) {
-    throw new Error(
-      `Invalid ${index === 0 ? "month" : "year"}: must be a number`
-    );
-  }
-
-  return parsedValue;
+  return {
+    id,
+    month,
+    year,
+    weatherData,
+  };
 }
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const buildApiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
+export const sortByDate = (data: WeatherData[]) => {
+  return data.sort((a, b) => (new Date(a.date) > new Date(b.date) ? 1 : -1));
+};

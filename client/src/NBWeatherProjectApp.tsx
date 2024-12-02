@@ -4,16 +4,17 @@ import {
   WEAHTER_DATA_ENDPOINT,
   WEAHTER_QUERY_ENDPOINT,
 } from "./utils/constants";
-import { buildApiUrl } from "./utils/api";
-import { WeatherData, WeatherQueries } from "./utils/types";
-import { DateForm, WeatherTable } from "./ui";
+import { CompareWeatherData, WeatherData, WeatherQueries } from "./utils/types";
+import { CompareView, DateForm, WeatherTable } from "./ui";
+import { buildApiUrl, buildComparionList } from "./utils";
+import BarGraph from "./ui/displays/bar-graph";
 
 export function NBWeatherProjectApp() {
   const generatedUserId = useId();
   const [userId, setUserId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("table");
-  // const [comparisonData, setComparisonData] = useState(null);
+  const [compareList, setCompareList] = useState<CompareWeatherData[]>([]);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("user_id");
@@ -84,6 +85,17 @@ export function NBWeatherProjectApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, userId]);
 
+  const handleComparisionList = async (query: string) => {
+    if (fetchWeatherMutation.isSuccess) {
+      const newItem = await buildComparionList(
+        fetchWeatherMutation.data,
+        query
+      );
+
+      setCompareList((prevList) => [...prevList, newItem]);
+    }
+  };
+
   return (
     <div className="p-4">
       <div className="flex flex-row justify-between">
@@ -114,7 +126,10 @@ export function NBWeatherProjectApp() {
                   <li className="mb-2" key={q.id}>
                     <button
                       className="underline"
-                      onClick={() => setQuery(q.query)}
+                      onClick={() => {
+                        setQuery(q.query);
+                        handleComparisionList(q.query);
+                      }}
                     >
                       {q.query}
                     </button>
@@ -148,7 +163,9 @@ export function NBWeatherProjectApp() {
               )}
             </>
           )}
-          {mode.includes("graph") && <p>Cool!</p>}
+          {mode.includes("graph") && fetchWeatherMutation.isSuccess && (
+            <CompareView compareList={compareList} />
+          )}
         </div>
       </div>
     </div>

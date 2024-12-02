@@ -8,6 +8,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { columns } from "./columns";
 import { WeatherData } from "@/utils/types";
+import { sortByDate } from "@/utils";
 
 export const WeatherTable = ({
   weatherData,
@@ -15,9 +16,10 @@ export const WeatherTable = ({
   weatherData: WeatherData[];
 }) => {
   const parentRef = useRef<HTMLDivElement>(null);
+  const sortedWeatherData = sortByDate(weatherData);
 
   const table = useReactTable({
-    data: weatherData,
+    data: sortedWeatherData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
