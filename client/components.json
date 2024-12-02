@@ -9,12 +9,5 @@
     "baseColor": "neutral",
     "cssVariables": false,
     "prefix": ""
-  },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/utils",
-    "ui": "@/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
   }
 }
