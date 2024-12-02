@@ -6,8 +6,7 @@ import {
 } from "./utils/constants";
 import { CompareWeatherData, WeatherData, WeatherQueries } from "./utils/types";
 import { CompareView, DateForm, WeatherTable } from "./ui";
-import { buildApiUrl, buildComparionList } from "./utils";
-import BarGraph from "./ui/displays/bar-graph";
+import { buildApiUrl, buildComparionList, sortByDate } from "./utils";
 
 export function NBWeatherProjectApp() {
   const generatedUserId = useId();
@@ -74,32 +73,42 @@ export function NBWeatherProjectApp() {
       }
 
       refetch();
+
       return response.json();
     },
   });
 
-  useEffect(() => {
-    if (query && userId) {
-      fetchWeatherMutation.mutate({ query, userId });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, userId]);
+  const handleComparisionList = (query: string, data: WeatherData[]) => {
+    const newItem = buildComparionList(sortByDate(data), query);
+    setCompareList((prevList) => [...prevList, newItem]);
+  };
 
-  const handleComparisionList = async (query: string) => {
-    if (fetchWeatherMutation.isSuccess) {
-      const newItem = await buildComparionList(
-        fetchWeatherMutation.data,
-        query
-      );
+  const handleSearch = (query: string, userId: string) => {
+    setQuery(query);
 
-      setCompareList((prevList) => [...prevList, newItem]);
-    }
+    fetchWeatherMutation.mutate(
+      {
+        query,
+        userId,
+      },
+      {
+        onSuccess: (data) => {
+          if (mode.includes("graph")) handleComparisionList(query, data);
+        },
+      }
+    );
   };
 
   return (
     <div className="p-4">
       <div className="flex flex-row justify-between">
-        <DateForm setQuery={setQuery} />
+        <DateForm
+          handleSearch={(searchQuery) => {
+            if (userId) {
+              handleSearch(searchQuery, userId);
+            }
+          }}
+        />
         <button
           onClick={() => setMode(mode === "table" ? "graph" : "table")}
           className="underline"
@@ -108,7 +117,7 @@ export function NBWeatherProjectApp() {
           view
         </button>
       </div>
-      <div className="flex flex-row justify-between	mt-4">
+      <div className="flex flex-row justify-between mt-4 h-screen">
         <div className="w-1/6">
           {isLoadingQueries && (
             <div className="text-blue-500 mb-4">Loading user queries...</div>
@@ -126,10 +135,7 @@ export function NBWeatherProjectApp() {
                   <li className="mb-2" key={q.id}>
                     <button
                       className="underline"
-                      onClick={() => {
-                        setQuery(q.query);
-                        handleComparisionList(q.query);
-                      }}
+                      onClick={() => handleSearch(q.query, q.userId)}
                     >
                       {q.query}
                     </button>
@@ -155,16 +161,24 @@ export function NBWeatherProjectApp() {
               {fetchWeatherMutation.isSuccess && (
                 <>
                   <h2 className="text-lg font-semibold mb-2">{query}</h2>
-                  {/* <pre className="whitespace-pre-wrap break-words">
-            {JSON.stringify(fetchWeatherMutation.data, null, 2)}
-          </pre> */}
                   <WeatherTable weatherData={fetchWeatherMutation.data} />
                 </>
               )}
             </>
           )}
           {mode.includes("graph") && fetchWeatherMutation.isSuccess && (
-            <CompareView compareList={compareList} />
+            <>
+              <h2 className="text-lg font-semibold">Compare months</h2>
+              <button
+                className="underline mb-2"
+                onClick={() => {
+                  setCompareList([]);
+                }}
+              >
+                Clear
+              </button>
+              <CompareView compareList={compareList} />
+            </>
           )}
         </div>
       </div>

@@ -38,7 +38,6 @@ export type WeatherDataPayload = {
 export type PayloadTypes = WeatherQueriesPayload | WeatherDataPayload;
 
 export type FormattedChartData = {
-  date: number;
   [key: string]: number | string | null;
 };
 

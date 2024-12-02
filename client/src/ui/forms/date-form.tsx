@@ -34,10 +34,10 @@ const schema = yup.object().shape({
 type FormData = yup.InferType<typeof schema>;
 
 interface DateForm {
-  setQuery: (query: string) => void;
+  handleSearch: (query: string) => void;
 }
 
-export function DateForm({ setQuery }: DateForm) {
+export function DateForm({ handleSearch }: DateForm) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
@@ -58,7 +58,7 @@ export function DateForm({ setQuery }: DateForm) {
       data.year.toString() as string
     }`;
 
-    setQuery(dateQuery);
+    handleSearch(dateQuery);
   };
 
   return (

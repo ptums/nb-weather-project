@@ -52,7 +52,7 @@ export function formatCompareWeatherData(
     .slice(0, maxDataPoints);
 
   return dates.map((date, index) => {
-    const dataPoint: FormattedChartData = { date: parseInt(date) };
+    const dataPoint: FormattedChartData = { date };
 
     compareWeatherData.forEach((data) => {
       const monthName = getMonthName(data.month);
@@ -64,6 +64,11 @@ export function formatCompareWeatherData(
 
       // Low temperature
       dataPoint[`${key}Low`] = data.weatherData[index]?.lowTemp ?? null;
+
+      // Day
+      dataPoint["day"] = new Date(data.weatherData[index]?.date)
+        .getUTCDate()
+        .toString();
 
       // Average temperature (for simplicity in the chart)
       const highTemp = data.weatherData[index]?.highTemp;
@@ -79,18 +84,18 @@ export function formatCompareWeatherData(
   });
 }
 
-export async function buildComparionList(
+export function buildComparionList(
   weatherData: WeatherData[],
   query: string
-) {
+): CompareWeatherData {
   const [month, year] = query.split("-").map(Number);
-
   const id = Date.now().toString();
 
   return {
     id,
     month,
     year,
+    query,
     weatherData,
   };
 }
