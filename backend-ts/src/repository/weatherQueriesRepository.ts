@@ -54,13 +54,16 @@ export const WeatherQueriesRepository = {
 
   findAll: async (): Promise<WeatherQueries[]> => {
     return prisma.weatherQueries.findMany({
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: true,
+      },
     });
   },
 
   addUserToQuery: async (
     queryId: number,
-    uniqueId: number
+    uniqueId: string
   ): Promise<WeatherQueries> => {
     return prisma.weatherQueries.update({
       where: { id: queryId },
