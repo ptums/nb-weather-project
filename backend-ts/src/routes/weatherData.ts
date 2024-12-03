@@ -33,14 +33,14 @@ router.post("/", async (req: Request, res: Response) => {
 // Create fetched weather data
 router.post("/fetch-weather", async (req: Request, res: Response) => {
   try {
-    const { query, userId } = req.body;
+    const { query, uniqueId } = req.body;
 
     if (!query || typeof query !== "string") {
       return res.status(400).json({ error: "Invalid query parameter" });
     }
 
-    const findUser = await findUserByUniqueId(userId);
-    let currentUser = userId;
+    const findUser = await findUserByUniqueId(uniqueId);
+    let currentUniqueId = uniqueId;
 
     // Step 1: Find or create WeatherQuery
     let weatherQuery = await findWeatherQueriesByQueryString(query);
@@ -54,16 +54,16 @@ router.post("/fetch-weather", async (req: Request, res: Response) => {
     // Step 2: Add user to create if its needs
     if (!findUser) {
       const userQuery = await createUser({
-        uniqueId: currentUser,
+        uniqueId: currentUniqueId,
       });
 
       await addUserToWeatherQuery(queryId as number, userQuery?.id as number);
 
-      currentUser = userQuery?.uniqueId;
+      currentUniqueId = userQuery?.uniqueId;
     } else {
       const existsUser = await userWeatherQueryExists(
         queryId as number,
-        currentUser
+        currentUniqueId
       );
 
       if (!existsUser) {

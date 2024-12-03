@@ -1,41 +1,50 @@
-import { PrismaClient, WeatherQueries, User } from "@prisma/client";
+import { PrismaClient, WeatherQueries, User, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+export type WeatherQueriesWithRelations = Prisma.WeatherQueriesGetPayload<{
+  include: { weatherData: true; users: true };
+}>;
 
 export const WeatherQueriesRepository = {
   create: async (
     weatherQueryData: Omit<WeatherQueries, "id">
-  ): Promise<WeatherQueries> => {
+  ): Promise<WeatherQueriesWithRelations> => {
     return prisma.weatherQueries.create({
       data: weatherQueryData,
       include: { weatherData: true, users: true },
     });
   },
 
-  findById: async (id: number): Promise<WeatherQueries | null> => {
+  findById: async (id: number): Promise<WeatherQueriesWithRelations | null> => {
     return prisma.weatherQueries.findUnique({
       where: { id },
       include: { weatherData: true, users: true },
     });
   },
 
-  findByUserId: async (userId: string): Promise<WeatherQueries[]> => {
+  findByUniqueId: async (
+    uniqueId: string
+  ): Promise<WeatherQueriesWithRelations[]> => {
     return prisma.weatherQueries.findMany({
       where: {
         users: {
           some: {
-            uniqueId: userId,
+            uniqueId: uniqueId,
           },
         },
       },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: true,
+      },
     });
   },
 
   update: async (
     id: number,
     weatherQueryData: Partial<Omit<WeatherQueries, "id">>
-  ): Promise<WeatherQueries> => {
+  ): Promise<WeatherQueriesWithRelations> => {
     return prisma.weatherQueries.update({
       where: { id },
       data: weatherQueryData,
@@ -49,21 +58,24 @@ export const WeatherQueriesRepository = {
     });
   },
 
-  findAll: async (): Promise<WeatherQueries[]> => {
+  findAll: async (): Promise<WeatherQueriesWithRelations[]> => {
     return prisma.weatherQueries.findMany({
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: true,
+      },
     });
   },
 
   addUserToQuery: async (
     queryId: number,
-    userId: number
-  ): Promise<WeatherQueries> => {
+    uniqueId: string
+  ): Promise<WeatherQueriesWithRelations> => {
     return prisma.weatherQueries.update({
       where: { id: queryId },
       data: {
         users: {
-          connect: { id: userId },
+          connect: { uniqueId: uniqueId },
         },
       },
       include: { weatherData: true, users: true },
@@ -72,20 +84,24 @@ export const WeatherQueriesRepository = {
 
   removeUserFromQuery: async (
     queryId: number,
-    userId: number
-  ): Promise<WeatherQueries> => {
+    uniqueId: string
+  ): Promise<WeatherQueriesWithRelations> => {
     return prisma.weatherQueries.update({
       where: { id: queryId },
       data: {
         users: {
-          disconnect: { id: userId },
+          disconnect: {
+            uniqueId: uniqueId,
+          },
         },
       },
       include: { weatherData: true, users: true },
     });
   },
 
-  findByQuery: async (query: string): Promise<WeatherQueries | null> => {
+  findByQuery: async (
+    query: string
+  ): Promise<WeatherQueriesWithRelations | null> => {
     return prisma.weatherQueries.findFirst({
       where: {
         query: {
@@ -104,13 +120,13 @@ export const WeatherQueriesRepository = {
     return count > 0;
   },
 
-  existsUser: async (queryId: number, userId: string): Promise<boolean> => {
+  existsUser: async (queryId: number, uniqueId: string): Promise<boolean> => {
     const count = await prisma.weatherQueries.count({
       where: {
         id: queryId,
         users: {
           some: {
-            uniqueId: userId,
+            uniqueId: uniqueId,
           },
         },
       },

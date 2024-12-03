@@ -1,5 +1,17 @@
 import express, { Request, Response } from "express";
-import { WeatherQueriesRepository } from "../repository";
+import { User } from "@prisma/client";
+import { WeatherQueriesUsers } from "../utils/types";
+import {
+  addUserToWeatherQuery,
+  createWeatherQuery,
+  deleteWeatherQuery,
+  findWeatherQueriesByQueryString,
+  findWeatherQueryById,
+  getAllWeatherQueries,
+  removeUserFromWeatherQuery,
+  updateWeatherQuery,
+  weatherQueryExists,
+} from "./methods/weatherQueries";
 
 const router = express.Router();
 
@@ -7,9 +19,7 @@ const router = express.Router();
 router.post("/", async (req: Request, res: Response) => {
   try {
     const weatherQueryData = req.body;
-    const createdQuery = await WeatherQueriesRepository.create(
-      weatherQueryData
-    );
+    const createdQuery = await createWeatherQuery(weatherQueryData);
     res.status(201).json(createdQuery);
   } catch (error) {
     console.error("Error creating weather query:", error);
@@ -21,7 +31,7 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    const query = await WeatherQueriesRepository.findById(id);
+    const query = await findWeatherQueryById(id);
     if (query) {
       res.json(query);
     } else {
@@ -34,13 +44,18 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Get all weather queries by user ID
-router.get("/user/:userId", async (req: Request, res: Response) => {
+router.get("/u/:uniqueId", async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
-    const queries = await WeatherQueriesRepository.findByUserId(userId);
-    res.json(queries);
+    const uniqueId = req.params.uniqueId;
+
+    const queries = await getAllWeatherQueries();
+    const results = queries.filter((q) =>
+      q.users.some((u: User) => u.uniqueId === uniqueId)
+    );
+
+    res.json(results);
   } catch (error) {
-    console.error("Error fetching weather queries for user:", error);
+    console.error("Error fetching queries:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -50,10 +65,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const weatherQueryData = req.body;
-    const updatedQuery = await WeatherQueriesRepository.update(
-      id,
-      weatherQueryData
-    );
+    const updatedQuery = await updateWeatherQuery(id, weatherQueryData);
     res.json(updatedQuery);
   } catch (error) {
     console.error("Error updating weather query:", error);
@@ -65,7 +77,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    await WeatherQueriesRepository.deleteById(id);
+    await deleteWeatherQuery(id);
     res.status(204).send();
   } catch (error) {
     console.error("Error deleting weather query:", error);
@@ -76,7 +88,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
 // Get all weather queries
 router.get("/", async (_req: Request, res: Response) => {
   try {
-    const queries = await WeatherQueriesRepository.findAll();
+    const queries = await getAllWeatherQueries();
     res.json(queries);
   } catch (error) {
     console.error("Error fetching all weather queries:", error);
@@ -86,15 +98,12 @@ router.get("/", async (_req: Request, res: Response) => {
 
 // Add a user to a weather query
 router.post(
-  "/queryId/:queryId/users/:userId",
+  "/queryId/:queryId/users/:uniqueId",
   async (req: Request, res: Response) => {
     try {
       const queryId = parseInt(req.params.queryId);
-      const userId = parseInt(req.params.userId);
-      const updatedQuery = await WeatherQueriesRepository.addUserToQuery(
-        queryId,
-        userId
-      );
+      const uniqueId = req.params.uniqueId;
+      const updatedQuery = await addUserToWeatherQuery(queryId, uniqueId);
       res.json(updatedQuery);
     } catch (error) {
       console.error("Error adding user to weather query:", error);
@@ -104,29 +113,27 @@ router.post(
 );
 
 // Remove a user from a weather query
-router.delete(
-  "/wq/:queryId/users/:userId",
-  async (req: Request, res: Response) => {
-    try {
-      const queryId = parseInt(req.params.queryId);
-      const userId = parseInt(req.params.userId);
-      const updatedQuery = await WeatherQueriesRepository.removeUserFromQuery(
-        queryId,
-        userId
-      );
-      res.json(updatedQuery);
-    } catch (error) {
-      console.error("Error removing user from weather query:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
+router.delete("/q/:id/u/:uniqueId", async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const uniqueId = req.params.uniqueId;
+
+    const updatedQuery = await removeUserFromWeatherQuery(
+      id,
+      uniqueId as string
+    );
+    res.json(updatedQuery);
+  } catch (error) {
+    console.error("Error removing user from weather query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-);
+});
 
 // Find weather queries by query string
 router.get("/wq/search/:query", async (req: Request, res: Response) => {
   try {
     const query = req.params.query;
-    const queries = await WeatherQueriesRepository.findByQuery(query);
+    const queries = await findWeatherQueriesByQueryString(query);
     res.json(queries);
   } catch (error) {
     console.error("Error searching weather queries:", error);
@@ -138,7 +145,7 @@ router.get("/wq/search/:query", async (req: Request, res: Response) => {
 router.head("/wq/:id", async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    const exists = await WeatherQueriesRepository.existsById(id);
+    const exists = await weatherQueryExists(id);
     if (exists) {
       res.status(200).send();
     } else {

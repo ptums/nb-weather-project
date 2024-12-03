@@ -22,7 +22,11 @@ export type WeatherData = {
 export type WeatherQueries = {
   id: number;
   query: string;
-  userId: string;
+  weatherData: WeatherData[];
+  users: {
+    id: number;
+    uniqueId: string;
+  }[];
 };
 
 export type WeatherQueriesPayload = {
@@ -47,4 +51,9 @@ export type CompareWeatherData = {
   month: number;
   year: number;
   query: string;
+};
+
+export type DeleteWeatherQueryResponse = {
+  message: string;
+  status: number;
 };
