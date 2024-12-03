@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { WeatherQueriesRepository } from "../repository";
+import { WeatherQueries } from "@prisma/client";
 
 const router = express.Router();
 
@@ -34,11 +35,21 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Get all weather queries by user ID
-router.get("/user/:userId", async (req: Request, res: Response) => {
+router.get("/u/:uniqueId", async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
-    const queries = await WeatherQueriesRepository.findByUserId(userId);
-    res.json(queries);
+    const uniqueId = req.params.uniqueId;
+
+    const queries: WeatherQueries[] = await WeatherQueriesRepository.findAll();
+    const results: WeatherQueries[] = [];
+
+    queries.forEach((q: WeatherQueries) => {
+      const uniqueUsers = q.users.filter((u) => u.uniqueId === uniqueId);
+
+      if (uniqueUsers.length > 0) {
+        results.push(q);
+      }
+    });
+    res.json(results);
   } catch (error) {
     console.error("Error fetching weather queries for user:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -86,14 +97,14 @@ router.get("/", async (_req: Request, res: Response) => {
 
 // Add a user to a weather query
 router.post(
-  "/queryId/:queryId/users/:userId",
+  "/queryId/:queryId/users/:uniqueId",
   async (req: Request, res: Response) => {
     try {
       const queryId = parseInt(req.params.queryId);
-      const userId = parseInt(req.params.userId);
+      const uniqueId = parseInt(req.params.uniqueId);
       const updatedQuery = await WeatherQueriesRepository.addUserToQuery(
         queryId,
-        userId
+        uniqueId
       );
       res.json(updatedQuery);
     } catch (error) {
@@ -104,23 +115,24 @@ router.post(
 );
 
 // Remove a user from a weather query
-router.delete(
-  "/wq/:queryId/users/:userId",
-  async (req: Request, res: Response) => {
-    try {
-      const queryId = parseInt(req.params.queryId);
-      const userId = parseInt(req.params.userId);
-      const updatedQuery = await WeatherQueriesRepository.removeUserFromQuery(
-        queryId,
-        userId
-      );
-      res.json(updatedQuery);
-    } catch (error) {
-      console.error("Error removing user from weather query:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
+router.delete("/q/:id/u/:uniqueId", async (req: Request, res: Response) => {
+  try {
+    const queryId = parseInt(req.params.queryId);
+    const uniqueId = req.params.uniqueId;
+    console.log({
+      queryId,
+      uniqueId,
+    });
+    const updatedQuery = await WeatherQueriesRepository.removeUserFromQuery(
+      queryId,
+      uniqueId as string
+    );
+    res.json(updatedQuery);
+  } catch (error) {
+    console.error("Error removing user from weather query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-);
+});
 
 // Find weather queries by query string
 router.get("/wq/search/:query", async (req: Request, res: Response) => {

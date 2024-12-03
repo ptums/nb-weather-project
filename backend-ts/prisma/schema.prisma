@@ -27,6 +27,6 @@ model WeatherQueries {
 
 model User {
   id        Int             @id @default(autoincrement())
-  uniqueId  String
+  uniqueId  String          @unique
   queries   WeatherQueries[]
 }

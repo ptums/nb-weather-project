@@ -19,16 +19,19 @@ export const WeatherQueriesRepository = {
     });
   },
 
-  findByUserId: async (userId: string): Promise<WeatherQueries[]> => {
+  findByUniqueId: async (uniqueId: string): Promise<WeatherQueries[]> => {
     return prisma.weatherQueries.findMany({
       where: {
         users: {
           some: {
-            uniqueId: userId,
+            uniqueId: uniqueId,
           },
         },
       },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: true,
+      },
     });
   },
 
@@ -57,13 +60,13 @@ export const WeatherQueriesRepository = {
 
   addUserToQuery: async (
     queryId: number,
-    userId: number
+    uniqueId: number
   ): Promise<WeatherQueries> => {
     return prisma.weatherQueries.update({
       where: { id: queryId },
       data: {
         users: {
-          connect: { id: userId },
+          connect: { uniqueId: uniqueId },
         },
       },
       include: { weatherData: true, users: true },
@@ -72,13 +75,15 @@ export const WeatherQueriesRepository = {
 
   removeUserFromQuery: async (
     queryId: number,
-    userId: number
+    uniqueId: string
   ): Promise<WeatherQueries> => {
     return prisma.weatherQueries.update({
       where: { id: queryId },
       data: {
         users: {
-          disconnect: { id: userId },
+          disconnect: {
+            uniqueId: uniqueId,
+          },
         },
       },
       include: { weatherData: true, users: true },
@@ -104,13 +109,13 @@ export const WeatherQueriesRepository = {
     return count > 0;
   },
 
-  existsUser: async (queryId: number, userId: string): Promise<boolean> => {
+  existsUser: async (queryId: number, uniqueId: string): Promise<boolean> => {
     const count = await prisma.weatherQueries.count({
       where: {
         id: queryId,
         users: {
           some: {
-            uniqueId: userId,
+            uniqueId: uniqueId,
           },
         },
       },
