@@ -57,7 +57,10 @@ router.post("/fetch-weather", async (req: Request, res: Response) => {
         uniqueId: currentUniqueId,
       });
 
-      await addUserToWeatherQuery(queryId as number, userQuery?.id as number);
+      await addUserToWeatherQuery(
+        queryId as number,
+        userQuery?.uniqueId as string
+      );
 
       currentUniqueId = userQuery?.uniqueId;
     } else {
@@ -67,7 +70,7 @@ router.post("/fetch-weather", async (req: Request, res: Response) => {
       );
 
       if (!existsUser) {
-        await addUserToWeatherQuery(queryId as number, findUser.id);
+        await addUserToWeatherQuery(queryId as number, findUser.uniqueId);
       }
     }
 
