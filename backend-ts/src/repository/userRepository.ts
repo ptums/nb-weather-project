@@ -1,6 +1,13 @@
 import { PrismaClient, User } from "@prisma/client";
+import { adminUser } from "../utils";
 
 const prisma = new PrismaClient();
+
+const excludeAdminCondition = {
+  uniqueId: {
+    not: adminUser,
+  },
+};
 
 export const UserRepository = {
   create: async (userData: Omit<User, "id">): Promise<User> => {
@@ -10,8 +17,11 @@ export const UserRepository = {
   },
 
   findById: async (id: number): Promise<User | null> => {
-    return prisma.user.findUnique({
-      where: { id },
+    return prisma.user.findFirst({
+      where: {
+        id,
+        ...excludeAdminCondition,
+      },
     });
   },
 
@@ -34,7 +44,9 @@ export const UserRepository = {
   // Additional utility functions
 
   findAll: async (): Promise<User[]> => {
-    return prisma.user.findMany();
+    return prisma.user.findMany({
+      where: excludeAdminCondition,
+    });
   },
 
   update: async (
@@ -49,7 +61,10 @@ export const UserRepository = {
 
   existsById: async (id: number): Promise<boolean> => {
     const count = await prisma.user.count({
-      where: { id },
+      where: {
+        id,
+        ...excludeAdminCondition,
+      },
     });
     return count > 0;
   },

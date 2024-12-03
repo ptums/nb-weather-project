@@ -1,9 +1,19 @@
 import { PrismaClient, WeatherQueries, User, Prisma } from "@prisma/client";
+import { adminUser } from "../utils";
 
 const prisma = new PrismaClient();
 
 export type WeatherQueriesWithRelations = Prisma.WeatherQueriesGetPayload<{
-  include: { weatherData: true; users: true };
+  include: {
+    weatherData: true;
+    users: {
+      where: {
+        uniqueId: {
+          not: string;
+        };
+      };
+    };
+  };
 }>;
 
 export const WeatherQueriesRepository = {
@@ -12,14 +22,32 @@ export const WeatherQueriesRepository = {
   ): Promise<WeatherQueriesWithRelations> => {
     return prisma.weatherQueries.create({
       data: weatherQueryData,
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
   findById: async (id: number): Promise<WeatherQueriesWithRelations | null> => {
     return prisma.weatherQueries.findUnique({
       where: { id },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
@@ -36,7 +64,13 @@ export const WeatherQueriesRepository = {
       },
       include: {
         weatherData: true,
-        users: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
       },
     });
   },
@@ -48,7 +82,16 @@ export const WeatherQueriesRepository = {
     return prisma.weatherQueries.update({
       where: { id },
       data: weatherQueryData,
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
@@ -62,7 +105,13 @@ export const WeatherQueriesRepository = {
     return prisma.weatherQueries.findMany({
       include: {
         weatherData: true,
-        users: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
       },
     });
   },
@@ -78,7 +127,16 @@ export const WeatherQueriesRepository = {
           connect: { uniqueId: uniqueId },
         },
       },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
@@ -95,7 +153,16 @@ export const WeatherQueriesRepository = {
           },
         },
       },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
@@ -109,7 +176,16 @@ export const WeatherQueriesRepository = {
           // mode: "insensitive",
         },
       },
-      include: { weatherData: true, users: true },
+      include: {
+        weatherData: true,
+        users: {
+          where: {
+            uniqueId: {
+              not: adminUser,
+            },
+          },
+        },
+      },
     });
   },
 
