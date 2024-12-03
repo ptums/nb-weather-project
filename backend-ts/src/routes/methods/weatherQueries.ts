@@ -1,9 +1,12 @@
 import { WeatherQueries } from "@prisma/client";
-import { WeatherQueriesRepository } from "../../repository";
+import {
+  WeatherQueriesRepository,
+  WeatherQueriesWithRelations,
+} from "../../repository";
 
 export async function createWeatherQuery(
   queryData: Omit<WeatherQueries, "id">
-): Promise<WeatherQueries | null> {
+): Promise<WeatherQueriesWithRelations | null> {
   try {
     return await WeatherQueriesRepository.create(queryData);
   } catch (error) {
@@ -14,7 +17,7 @@ export async function createWeatherQuery(
 
 export async function findWeatherQueryById(
   id: number
-): Promise<WeatherQueries | null> {
+): Promise<WeatherQueriesWithRelations | null> {
   try {
     return await WeatherQueriesRepository.findById(id);
   } catch (error) {
@@ -23,13 +26,13 @@ export async function findWeatherQueryById(
   }
 }
 
-export async function findWeatherQueriesByUserId(
-  userId: string
-): Promise<WeatherQueries[]> {
+export async function findWeatherQueriesByUniqueId(
+  uniqueId: string
+): Promise<WeatherQueriesWithRelations[]> {
   try {
-    return await WeatherQueriesRepository.findByUserId(userId);
+    return await WeatherQueriesRepository.findByUniqueId(uniqueId);
   } catch (error) {
-    console.error(`Error finding weather queries for user ${userId}:`, error);
+    console.error(`Error finding weather queries for user ${uniqueId}:`, error);
     return [];
   }
 }
@@ -37,7 +40,7 @@ export async function findWeatherQueriesByUserId(
 export async function updateWeatherQuery(
   id: number,
   queryData: Partial<Omit<WeatherQueries, "id">>
-): Promise<WeatherQueries | null> {
+): Promise<WeatherQueriesWithRelations | null> {
   try {
     return await WeatherQueriesRepository.update(id, queryData);
   } catch (error) {
@@ -56,7 +59,9 @@ export async function deleteWeatherQuery(id: number): Promise<boolean> {
   }
 }
 
-export async function getAllWeatherQueries(): Promise<WeatherQueries[]> {
+export async function getAllWeatherQueries(): Promise<
+  WeatherQueriesWithRelations[]
+> {
   try {
     return await WeatherQueriesRepository.findAll();
   } catch (error) {
@@ -66,39 +71,32 @@ export async function getAllWeatherQueries(): Promise<WeatherQueries[]> {
 }
 
 export async function addUserToWeatherQuery(
-  queryId: number,
-  userId: number
-): Promise<WeatherQueries | null> {
-  console.log({
-    queryId,
-    userId,
-  });
+  id: number,
+  uniqueId: string
+): Promise<WeatherQueriesWithRelations | null> {
   try {
-    return await WeatherQueriesRepository.addUserToQuery(queryId, userId);
+    return await WeatherQueriesRepository.addUserToQuery(id, uniqueId);
   } catch (error) {
-    console.error(`Error adding user ${userId} to query ${queryId}:`, error);
+    console.error(`Error adding user ${uniqueId} to query ${id}:`, error);
     return null;
   }
 }
 
 export async function removeUserFromWeatherQuery(
-  queryId: number,
-  userId: number
-): Promise<WeatherQueries | null> {
+  id: number,
+  uniqueId: string
+): Promise<WeatherQueriesWithRelations | null> {
   try {
-    return await WeatherQueriesRepository.removeUserFromQuery(queryId, userId);
+    return await WeatherQueriesRepository.removeUserFromQuery(id, uniqueId);
   } catch (error) {
-    console.error(
-      `Error removing user ${userId} from query ${queryId}:`,
-      error
-    );
+    console.error(`Error removing user ${uniqueId} from query ${id}:`, error);
     return null;
   }
 }
 
 export async function findWeatherQueriesByQueryString(
   query: string
-): Promise<WeatherQueries | null> {
+): Promise<WeatherQueriesWithRelations | null> {
   try {
     return await WeatherQueriesRepository.findByQuery(query);
   } catch (error) {

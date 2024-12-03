@@ -151,17 +151,11 @@ export function NBWeatherProjectApp() {
     uniqueId: string
   ) => {
     for (const query of userQueries) {
-      const user = query.users.find((user) => user.uniqueId === uniqueId);
       await deleteWeatherMutation.mutateAsync({
         id: query.id.toString(),
-        uniqueId: user?.uniqueId as string,
+        uniqueId: uniqueId,
       });
     }
-
-    console.log({
-      userQueries,
-      uniqueId,
-    });
   };
 
   return (
